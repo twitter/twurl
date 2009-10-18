@@ -37,8 +37,25 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
 
   module RequestMethodParsingTests
     def test_request_method_is_default_if_unspecified
-      options = Twurl::CLI::parse_options(['/1/url/does/not/matter.xml'])
+      options = Twurl::CLI.parse_options(['/1/url/does/not/matter.xml'])
       assert_equal Twurl::CLI::DEFAULT_REQUEST_METHOD, options.request_method
+    end
+
+    def test_specifying_a_request_method_extracts_and_normalizes_request_method
+      variations = [%w[-X put], %w[-X PUT], %w[--request-method PUT], %w[--request-method put]]
+      variations.each do |option_variation|
+        path = '/1/url/does/not/matter.xml'
+        order_variant_1 = [option_variation, path].flatten
+        order_variant_2 = [path, option_variation].flatten
+        [order_variant_1, order_variant_2].each do |args|
+          options = Twurl::CLI.parse_options(args)
+          assert_equal 'put', options.request_method
+        end
+      end
+    end
+
+    def test_specifying_unsupported_request_method_returns_an_error
+      Twurl::CLI.parse_options(['-X', 'UNSUPPORTED'])
     end
   end
   include RequestMethodParsingTests

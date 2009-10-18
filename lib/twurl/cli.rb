@@ -61,11 +61,11 @@ module Twurl
           _.separator ""
           _.separator "Common options:"
 
-          _.on('-t', '--trace', 'Trace request/response traffic') do
-            options.trace = true
+          _.on('-t', '--[no-]trace', 'Trace request/response traffic (default: --no-trace)') do |trace|
+            options.trace = trace
           end
 
-          _.on('-X', '--request-method', 'Request method (default: GET)') do |request_method|
+          _.on('-X', '--request-method [METHOD]', 'Request method (default: GET)') do |request_method|
             options.request_method = request_method.downcase
           end
 
