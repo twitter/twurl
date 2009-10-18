@@ -3,6 +3,7 @@ require 'oauth'
 require 'optparse'
 require 'ostruct'
 
-require 'twurl/oauth_client'
-require 'twurl/rcfile'
-require 'twurl/request_tracing'
+library_files = Dir[File.join(File.dirname(__FILE__), "/twurl/**/*.rb")]
+library_files.each do |file|
+  require file
+end

@@ -1,12 +1,23 @@
 module Twurl
   class CLI
     SUPPORTED_COMMANDS = %w(authorize)
+    DEFAULT_COMMAND    = 'request'
     PATH_PATTERN       = /^\/\w+/
 
     class << self
       def run(args)
         options = parse_options(args)
+        dispatch(options)
         p options
+      end
+
+      def dispatch(options)
+        case options.command
+        when 'authorize'
+        when 'request'
+        else
+          abort("Unsupported command: #{options.command}")
+        end
       end
 
       def parse_options(args)
@@ -73,6 +84,8 @@ module Twurl
         def extract_command!(arguments)
           if SUPPORTED_COMMANDS.include?(arguments.first)
             arguments.shift
+          else
+            DEFAULT_COMMAND
           end
         end
 
@@ -87,8 +100,6 @@ module Twurl
           path
         end
     end
-
-    run(ARGV)
   end
 end
 
