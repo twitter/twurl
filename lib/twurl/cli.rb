@@ -1,8 +1,9 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS = %w(authorize)
-    DEFAULT_COMMAND    = 'request'
-    PATH_PATTERN       = /^\/\w+/
+    SUPPORTED_COMMANDS     = %w(authorize)
+    DEFAULT_COMMAND        = 'request'
+    DEFAULT_REQUEST_METHOD = 'get'
+    PATH_PATTERN           = /^\/\w+/
 
     class << self
       def run(args)
@@ -74,9 +75,10 @@ module Twurl
           end
         end
 
-        arguments       = option_parser.parse!(args)
-        options.command = extract_command!(arguments)
-        options.path    = extract_path!(arguments)
+        arguments                = option_parser.parse!(args)
+        options.request_method ||= DEFAULT_REQUEST_METHOD
+        options.command          = extract_command!(arguments)
+        options.path             = extract_path!(arguments)
         options
       end
 

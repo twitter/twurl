@@ -34,4 +34,12 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
     end
   end
   include CommandParsingTests
+
+  module RequestMethodParsingTests
+    def test_request_method_is_default_if_unspecified
+      options = Twurl::CLI::parse_options(['/1/url/does/not/matter.xml'])
+      assert_equal Twurl::CLI::DEFAULT_REQUEST_METHOD, options.request_method
+    end
+  end
+  include RequestMethodParsingTests
 end
