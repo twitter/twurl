@@ -5,11 +5,11 @@ module Twurl
 
     class << self
       def run(args)
-        options = parse(args)
+        options = parse_options(args)
         p options
       end
 
-      def parse(args)
+      def parse_options(args)
         arguments = args.dup
 
         options       = OpenStruct.new
@@ -51,6 +51,10 @@ module Twurl
 
           _.on('-t', '--trace', 'Trace request/response traffic') do
             options.trace = true
+          end
+
+          _.on('-X', '--request-method', 'Request method (default: GET)') do |request_method|
+            options.request_method = request_method.downcase
           end
 
           _.on_tail("-h", "--help", "Show this message") do
