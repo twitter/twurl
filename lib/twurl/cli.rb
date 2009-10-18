@@ -26,6 +26,7 @@ module Twurl
 
         options       = OpenStruct.new
         options.trace = false
+        options.data  = {}
 
         option_parser = OptionParser.new do |_|
           _.banner = "Usage: twurl authorize -u username -p password -c HQsAGcVm5MQT3n6j7qVJw -s asdfasd223sd2\n" +
@@ -65,6 +66,13 @@ module Twurl
             options.trace = trace
           end
 
+          _.on('-d', '--data [DATA]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
+            data.split('&').each do |pair|
+              key, value = pair.split('=')
+              options.data[key] = value
+            end
+          end
+
           _.on('-X', '--request-method [METHOD]', 'Request method (default: GET)') do |request_method|
             options.request_method = request_method.downcase
           end
@@ -76,7 +84,7 @@ module Twurl
         end
 
         arguments                = option_parser.parse!(args)
-        options.request_method ||= DEFAULT_REQUEST_METHOD
+        options.request_method ||= options.data.empty? ? DEFAULT_REQUEST_METHOD : 'post'
         options.command          = extract_command!(arguments)
         options.path             = extract_path!(arguments)
         options

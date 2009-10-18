@@ -59,4 +59,33 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
     end
   end
   include RequestMethodParsingTests
+
+  module DataParsingTests
+    def test_extracting_a_single_key_value_pair
+      options = Twurl::CLI.parse_options(['-d', 'key=value'])
+      assert_equal({'key' => 'value'}, options.data)
+    end
+
+    def test_passing_data_and_no_explicit_request_method_defaults_request_method_to_post
+      options = Twurl::CLI.parse_options(['-d', 'key=value'])
+      assert_equal 'post', options.request_method
+    end
+
+    def test_passing_data_and_an_explicit_request_method_uses_the_specified_method
+      options = Twurl::CLI.parse_options(['-d', 'key=value', '-X', 'DELETE'])
+      assert_equal({'key' => 'value'}, options.data)
+      assert_equal 'delete', options.request_method
+    end
+
+    def test_multiple_pairs_when_option_is_specified_multiple_times_on_command_line_collects_all
+      options = Twurl::CLI.parse_options(['-d', 'key=value', '-d', 'another=pair'])
+      assert_equal({'key' => 'value', 'another' => 'pair'}, options.data)
+    end
+
+    def test_multiple_pairs_separated_by_ampersand_are_all_captured
+      options = Twurl::CLI.parse_options(['-d', 'key=value&another=pair'])
+      assert_equal({'key' => 'value', 'another' => 'pair'}, options.data)
+    end
+  end
+  include DataParsingTests
 end
