@@ -64,6 +64,9 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
     def test_extracting_a_single_key_value_pair
       options = Twurl::CLI.parse_options(['-d', 'key=value'])
       assert_equal({'key' => 'value'}, options.data)
+
+      options = Twurl::CLI.parse_options(['--data', 'key=value'])
+      assert_equal({'key' => 'value'}, options.data)
     end
 
     def test_passing_data_and_no_explicit_request_method_defaults_request_method_to_post

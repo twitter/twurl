@@ -9,13 +9,14 @@ module Twurl
       def run(args)
         options = parse_options(args)
         dispatch(options)
-        p options
       end
 
       def dispatch(options)
         case options.command
         when 'authorize'
+          AuthorizationController.dispatch(options)
         when 'request'
+          RequestController.dispatch(client, options)
         else
           abort("Unsupported command: #{options.command}")
         end
@@ -28,58 +29,29 @@ module Twurl
         options.trace = false
         options.data  = {}
 
-        option_parser = OptionParser.new do |_|
-          _.banner = "Usage: twurl authorize -u username -p password -c HQsAGcVm5MQT3n6j7qVJw -s asdfasd223sd2\n" +
+        option_parser = OptionParser.new do |o|
+          o.extend Options
+          o.options = options
+
+          o.banner = "Usage: twurl authorize -u username -p password -c HQsAGcVm5MQT3n6j7qVJw -s asdfasd223sd2\n" +
                      "       twurl [options] /statuses/home_timeline.xml"
 
-          _.separator ""
-          _.separator "Getting started:"
-
-          _.on('-T', '--tutorial', "Narrative overview of Twurl commands") do
-            puts DATA.read
-            exit
+          o.section "Getting started:" do
+            tutorial
           end
 
-          _.separator ""
-          _.separator "Registration options:"
-
-          _.on('-c', '--consumer-key', "Your consumer key") do |key|
-            options.consumer_key = key
+          o.section "Registration options:" do
+            consumer_key
+            consumer_secret
+            access_token
+            access_token_secret
           end
 
-          _.on('-s', '--consumer-secret', "Your consumer secret") do |secret|
-            options.consumer_secret = secret
-          end
-
-          _.on('-a', '--access-token', 'Your access token') do |token|
-            options.access_token = token
-          end
-
-          _.on('-S', '--access-token-secret', "Your access token secret") do |secret|
-            options.access_token_secret = secret
-          end
-
-          _.separator ""
-          _.separator "Common options:"
-
-          _.on('-t', '--[no-]trace', 'Trace request/response traffic (default: --no-trace)') do |trace|
-            options.trace = trace
-          end
-
-          _.on('-d', '--data [DATA]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
-            data.split('&').each do |pair|
-              key, value = pair.split('=')
-              options.data[key] = value
-            end
-          end
-
-          _.on('-X', '--request-method [METHOD]', 'Request method (default: GET)') do |request_method|
-            options.request_method = request_method.downcase
-          end
-
-          _.on_tail("-h", "--help", "Show this message") do
-            puts _
-            exit
+          o.section "Common options:" do
+            trace
+            data
+            request_method
+            help
           end
         end
 
@@ -109,6 +81,80 @@ module Twurl
           end
           path
         end
+    end
+
+    module Options
+      def self.extended(parser)
+        class << parser
+          attr_accessor :options
+        end
+      end
+
+      def section(heading, &block)
+        separator ""
+        separator heading
+
+        instance_eval(&block)
+      end
+
+      def tutorial
+        on('-T', '--tutorial', "Narrative overview of Twurl commands") do
+          puts DATA.read
+          exit
+        end
+      end
+
+      def consumer_key
+        on('-c', '--consumer-key', "Your consumer key") do |key|
+          options.consumer_key = key
+        end
+      end
+
+      def consumer_secret
+        on('-s', '--consumer-secret', "Your consumer secret") do |secret|
+          options.consumer_secret = secret
+        end
+      end
+
+      def access_token
+        on('-a', '--access-token', 'Your access token') do |token|
+          options.access_token = token
+        end
+      end
+
+      def access_token_secret
+        on('-S', '--access-token-secret', "Your access token secret") do |secret|
+          options.access_token_secret = secret
+        end
+      end
+
+      def trace
+        on('-t', '--[no-]trace', 'Trace request/response traffic (default: --no-trace)') do |trace|
+          options.trace = trace
+        end
+      end
+
+      def data
+        on('-d', '--data [DATA]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
+          data.split('&').each do |pair|
+            key, value = pair.split('=')
+            options.data[key] = value
+          end
+        end
+      end
+
+      def request_method
+        on('-X', '--request-method [METHOD]', 'Request method (default: GET)') do |request_method|
+          options.request_method = request_method.downcase
+        end
+      end
+
+      def help
+        on_tail("-h", "--help", "Show this message") do
+          puts self
+          exit
+        end
+      end
     end
   end
 end
