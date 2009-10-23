@@ -44,13 +44,17 @@ class Twurl::RCFile::DefaultProfileFromDefaultRCFileTest < Test::Unit::TestCase
   attr_reader :rcfile
   def setup
     mock(YAML).load_file(Twurl::RCFile.file_path) { raise Errno::ENOENT }.times(1)
-    mock.proxy(Twurl::RCFile).default_rcfile_structure.times(1)
+    mock.proxy(Twurl::RCFile).default_rcfile_structure.times(any_times)
 
     @rcfile = Twurl::RCFile.new
   end
 
   def test_default_rcfile_structure_has_no_default_profile
     assert_nil rcfile.default_profile
+  end
+
+  def test_rcfile_is_considered_empty_at_first
+    assert rcfile.empty?
   end
 
   def test_setting_default_profile
@@ -64,5 +68,36 @@ class Twurl::RCFile::DefaultProfileFromDefaultRCFileTest < Test::Unit::TestCase
   end
 end
 
-class Twurl::RCFile::ConfigurationTest < Test::Unit::TestCase
+class Twurl::RCFile::UpdatingTest < Test::Unit::TestCase
+  attr_reader :rcfile
+  def setup
+    mock(YAML).load_file(Twurl::RCFile.file_path) { raise Errno::ENOENT }.times(1)
+
+    @rcfile = Twurl::RCFile.new
+    assert rcfile.profiles.empty?
+    assert_nil rcfile.default_profile
+    mock(rcfile).save.times(any_times)
+  end
+
+  def test_adding_the_first_client_sets_it_as_default_profile
+    client = Twurl::OAuthClient.test_exemplar
+
+    rcfile << client
+    assert_equal client.username, rcfile.default_profile
+    assert_equal({client.username => client.to_hash}, rcfile.profiles)
+  end
+
+  def test_adding_additional_clients_does_not_change_default_profile
+    first_client = Twurl::OAuthClient.test_exemplar
+
+    rcfile << first_client
+    assert_equal first_client.username, rcfile.default_profile
+
+    additional_client = Twurl::OAuthClient.test_exemplar(:username => 'additiona_examplar_username')
+    rcfile << additional_client
+
+    assert_equal first_client.username, rcfile.default_profile
+    assert_equal({first_client.username => first_client.to_hash, additional_client.username => additional_client.to_hash},
+                 rcfile.profiles)
+  end
 end

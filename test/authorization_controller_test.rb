@@ -12,6 +12,7 @@ class Twurl::AuthorizationController::DispatchTest < Test::Unit::TestCase
     mock(client).exchange_credentials_for_access_token.times(1)
     mock(client).save.times(1)
     mock(controller).raise(Twurl::Exception, Twurl::AuthorizationController::AUTHORIZATION_FAILED_MESSAGE).never
+    mock(Twurl::CLI).puts(Twurl::AuthorizationController::AUTHORIZATION_SUCCEEDED_MESSAGE).times(1)
 
     controller.dispatch
   end
