@@ -17,7 +17,11 @@ module Twurl
       end
 
       def load_client_for_username(username)
-        new(rcfile[username]) || raise("No profile for #{username}")
+        if attributes = rcfile[username]
+          new(attributes)
+        else
+          raise Exception, "No profile for #{username}"
+        end
       end
 
       def load_new_client_from_options(options)

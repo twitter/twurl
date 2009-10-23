@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/test_helper'
-# File.unlink(RCFile.file_path)
+
 class Twurl::RCFile::PathConstructionTest < Test::Unit::TestCase
   def test_file_path_appends_file_to_directory
     assert_equal File.join(Twurl::RCFile.directory, Twurl::RCFile::FILE), Twurl::RCFile.file_path
@@ -116,6 +116,7 @@ class Twurl::RCFile::SavingTest < Test::Unit::TestCase
   end
 
   def teardown
+    super
     delete_rcfile
   end
 
