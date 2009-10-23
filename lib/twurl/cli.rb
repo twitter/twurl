@@ -7,9 +7,11 @@ module Twurl
     DEFAULT_PROTOCOL       = 'https'
     PATH_PATTERN           = /^\/\w+/
     TUTORIAL               = File.dirname(__FILE__) + '/../../TUTORIAL'
+    @output              ||= STDOUT
 
     class << self
-      attr_reader :options
+      attr_reader   :options
+      attr_accessor :output
 
       def run(args)
         options = parse_options(args)
@@ -37,7 +39,6 @@ module Twurl
         @options        = Options.new
         options.trace   = false
         options.data    = {}
-        options.output  = STDOUT
 
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
@@ -77,9 +78,9 @@ module Twurl
         options.path             = extract_path!(arguments)
         options
       end
-      
+
       def puts(*args, &block)
-        options.output.puts(*args, &block)
+        output.puts(*args, &block)
       end
 
       private
@@ -178,7 +179,7 @@ module Twurl
           options.host = host
         end
       end
-      
+
       def quiet
         on('-q', '--quiet', 'Suppress all output (default: output is printed to STDOUT)') do |quiet|
           options.output = StringIO.new
@@ -199,7 +200,7 @@ module Twurl
 
       def help
         on_tail("-h", "--help", "Show this message") do
-          options.output.puts self
+          CLI.puts self
           exit
         end
       end
@@ -208,7 +209,7 @@ module Twurl
         system "stty -echo"
         print "#{label}: "
         result = STDIN.gets.chomp
-        options.output.puts
+        CLI.puts
         result
       rescue Interrupt
         exit

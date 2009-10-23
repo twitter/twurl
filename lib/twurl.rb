@@ -13,4 +13,3 @@ module Twurl
   class Exception < ::Exception
   end
 end
-  
