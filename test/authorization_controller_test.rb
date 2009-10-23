@@ -11,7 +11,7 @@ class Twurl::AuthorizationController::DispatchTest < Test::Unit::TestCase
   def test_successful_authentication_saves_retrieved_access_token
     mock(client).exchange_credentials_for_access_token.times(1)
     mock(client).save.times(1)
-    mock(controller).abort(Twurl::AuthorizationController::AUTHORIZATION_FAILED_MESSAGE).never
+    mock(controller).raise(Twurl::Exception, Twurl::AuthorizationController::AUTHORIZATION_FAILED_MESSAGE).never
 
     controller.dispatch
   end
@@ -20,7 +20,7 @@ class Twurl::AuthorizationController::DispatchTest < Test::Unit::TestCase
     def test_failed_authorization_does_not_save_client
       mock(client).exchange_credentials_for_access_token { raise OAuth::Unauthorized }
       mock(client).save.never
-      mock(controller).abort(Twurl::AuthorizationController::AUTHORIZATION_FAILED_MESSAGE).times(1)
+      mock(controller).raise(Twurl::Exception, Twurl::AuthorizationController::AUTHORIZATION_FAILED_MESSAGE).times(1)
 
       controller.dispatch
     end

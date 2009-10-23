@@ -25,7 +25,7 @@ module Twurl
       end
 
       def load_default_client
-        raise "You must authorize first" unless rcfile.default_profile
+        raise Exception, "You must authorize first" unless rcfile.default_profile
         new(rcfile[rcfile.default_profile])
       end
     end

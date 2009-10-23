@@ -4,8 +4,9 @@ module Twurl
     def dispatch
       client.exchange_credentials_for_access_token
       client.save
+      CLI.puts "Authorization successful"
     rescue OAuth::Unauthorized
-      abort(AUTHORIZATION_FAILED_MESSAGE)
+      raise Exception, AUTHORIZATION_FAILED_MESSAGE
     end
   end
 end

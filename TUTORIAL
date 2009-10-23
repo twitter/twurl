@@ -1,0 +1,40 @@
++-----------------+
+| Getting Started |
++-----------------+
+
+The first thing you have to do is register an OAuth application 
+to get a consumer key and secret. 
+
+  http://twitter.com/apps/new
+
+When you have your consumer key and its secret you authorize 
+your Twitter account to make API requests with your consumer key 
+and secret.
+
+  % twurl authorize -u username -p password      \ 
+                    --consumer-key the_key       \
+                    --consumer-secret the_secret
+  
+Assuming your username, password, key and secret are all correct 
+you are now authorized to make requests with the API.
+
++-----------------+
+| Making Requests |
++-----------------+
+
+The simplest request just requires that you specify the path you 
+want to request.
+
+  % twurl /1/statuses/home_timeline.xml
+  
+Similar to curl, a GET request is performed by default.
+
+You can implicitly perform a POST request by passing the -d option.
+
+  % twurl -d 'status=Testing twurl' /1/statuses/update.xml
+  
+You can explicitly specify what request method to perform with 
+the -X (or --request-method) option.
+
+  % twurl -X DELETE /1/statuses/destroy/123456.xml
+  

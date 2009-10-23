@@ -1,11 +1,12 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS     = %w(authorize)
+    SUPPORTED_COMMANDS     = %w(authorize accounts)
     DEFAULT_COMMAND        = 'request'
     DEFAULT_REQUEST_METHOD = 'get'
     DEFAULT_HOST           = 'api.twitter.com'
     DEFAULT_PROTOCOL       = 'https'
     PATH_PATTERN           = /^\/\w+/
+    TUTORIAL               = File.dirname(__FILE__) + '/../../TUTORIAL'
 
     class << self
       attr_reader :options
@@ -20,12 +21,14 @@ module Twurl
         controller = case options.command
                      when 'authorize'
                        AuthorizationController
+                     when 'accounts'
+                       AccountInformationController
                      when 'request'
                        RequestController
-                     else
-                       abort("Unsupported command: #{options.command}")
                      end
         controller.dispatch(client, options)
+      rescue Twurl::Exception => exception
+        abort(exception.message)
       end
 
       def parse_options(args)
@@ -34,6 +37,7 @@ module Twurl
         @options        = Options.new
         options.trace   = false
         options.data    = {}
+        options.output  = STDOUT
 
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
@@ -58,6 +62,7 @@ module Twurl
             trace
             data
             host
+            quiet
             disable_ssl
             request_method
             help
@@ -71,6 +76,10 @@ module Twurl
         options.command          = extract_command!(arguments)
         options.path             = extract_path!(arguments)
         options
+      end
+      
+      def puts(*args, &block)
+        options.output.puts(*args, &block)
       end
 
       private
@@ -107,26 +116,26 @@ module Twurl
       end
 
       def tutorial
-        on('-T', '--tutorial', "Narrative overview of Twurl commands") do
-          puts DATA.read
+        on('-T', '--tutorial', "Narrative overview of how to get started using Twurl") do
+          options.output.puts IO.read(TUTORIAL)
           exit
         end
       end
 
       def consumer_key
-        on('-c', '--consumer-key [KEY]', "Your consumer key (required)") do |key|
-          options.consumer_key = key
+        on('-c', '--consumer-key [key]', "Your consumer key (required)") do |key|
+          options.consumer_key = key ? key : prompt_for('Consumer key')
         end
       end
 
       def consumer_secret
-        on('-s', '--consumer-secret [SECRET]', "Your consumer secret (required)") do |secret|
-          options.consumer_secret = secret
+        on('-s', '--consumer-secret [secret]', "Your consumer secret (required)") do |secret|
+          options.consumer_secret = secret ? secret : prompt_for('Consumer secret')
         end
       end
 
       def access_token
-        on('-a', '--access-token', 'Your access token') do |token|
+        on('-a', '--access-token [token]', 'Your access token') do |token|
           options.access_token = token
         end
       end
@@ -138,14 +147,14 @@ module Twurl
       end
 
       def username
-        on('-u', '--username [USERNAME]', 'Specify username to act on behalf of (required)') do |username|
+        on('-u', '--username [username]', 'Username of account to authorize (required)') do |username|
           options.username = username
         end
       end
 
       def password
-        on('-p', '--password [PASSWORD]', 'Specify username to act on behalf of (required)') do |password|
-          options.password = password ? password : prompt_for_password
+        on('-p', '--password [password]', 'Password of account to authorize (required)') do |password|
+          options.password = password ? password : prompt_for('Password')
         end
       end
 
@@ -156,7 +165,7 @@ module Twurl
       end
 
       def data
-        on('-d', '--data [DATA]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
+        on('-d', '--data [data]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
           data.split('&').each do |pair|
             key, value = pair.split('=')
             options.data[key] = value
@@ -165,8 +174,14 @@ module Twurl
       end
 
       def host
-        on('-H', '--host [HOST]', 'Specify host to make requests to (default: api.twitter.com)') do |host|
+        on('-H', '--host [host]', 'Specify host to make requests to (default: api.twitter.com)') do |host|
           options.host = host
+        end
+      end
+      
+      def quiet
+        on('-q', '--quiet', 'Suppress all output (default: output is printed to STDOUT)') do |quiet|
+          options.output = StringIO.new
         end
       end
 
@@ -177,22 +192,26 @@ module Twurl
       end
 
       def request_method
-        on('-X', '--request-method [METHOD]', 'Request method (default: GET)') do |request_method|
+        on('-X', '--request-method [method]', 'Request method (default: GET)') do |request_method|
           options.request_method = request_method.downcase
         end
       end
 
       def help
         on_tail("-h", "--help", "Show this message") do
-          puts self
+          options.output.puts self
           exit
         end
       end
 
-      def prompt_for_password
+      def prompt_for(label)
         system "stty -echo"
-        print "Password: "
-        STDIN.gets.chomp
+        print "#{label}: "
+        result = STDIN.gets.chomp
+        options.output.puts
+        result
+      rescue Interrupt
+        exit
       ensure
         system "stty echo"
       end
@@ -216,15 +235,3 @@ module Twurl
     end
   end
 end
-
-__END__
-First things first you need to authorize an account to use a consumer key and secret.
-
-If you don't know your consumer key go here and register an OAuth
-application: http://url
-
-Example:
-
-  twurl authorize -u noradio -p password   \
-                  -c HQsAGcVm5MQT3n6j7qVJw \
-                  -s TFbERBg8mAanMaAkhlyILQ16Stk2oEUzezr9pBSv1FU

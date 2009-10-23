@@ -24,6 +24,10 @@ module Twurl
     def initialize
       @data = self.class.load
     end
+    
+    def empty?
+      data == self.class.default_rcfile_structure
+    end
 
     def save
       File.open(self.class.file_path, 'w') do |rcfile|
