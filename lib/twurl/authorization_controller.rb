@@ -5,7 +5,7 @@ module Twurl
       client.exchange_credentials_for_access_token
       client.save
     rescue OAuth::Unauthorized
-      abort(AUTHORIZATION_FAILED_MESSAGE)
+      raise Exception, AUTHORIZATION_FAILED_MESSAGE
     end
   end
 end

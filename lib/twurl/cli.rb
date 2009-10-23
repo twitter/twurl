@@ -6,6 +6,7 @@ module Twurl
     DEFAULT_HOST           = 'api.twitter.com'
     DEFAULT_PROTOCOL       = 'https'
     PATH_PATTERN           = /^\/\w+/
+    TUTORIAL               = File.dirname(__FILE__) + '/../../TUTORIAL'
 
     class << self
       attr_reader :options
@@ -22,10 +23,10 @@ module Twurl
                        AuthorizationController
                      when 'request'
                        RequestController
-                     else
-                       abort("Unsupported command: #{options.command}")
                      end
         controller.dispatch(client, options)
+      rescue Twurl::Exception => exception
+        abort(exeption.message)
       end
 
       def parse_options(args)
@@ -34,6 +35,7 @@ module Twurl
         @options        = Options.new
         options.trace   = false
         options.data    = {}
+        options.output  = STDOUT
 
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
@@ -58,6 +60,7 @@ module Twurl
             trace
             data
             host
+            quiet
             disable_ssl
             request_method
             help
@@ -108,7 +111,7 @@ module Twurl
 
       def tutorial
         on('-T', '--tutorial', "Narrative overview of Twurl commands") do
-          puts DATA.read
+          options.output.puts IO.read(TUTORIAL)
           exit
         end
       end
@@ -169,6 +172,12 @@ module Twurl
           options.host = host
         end
       end
+      
+      def quiet
+        on('-q', '--quiet', 'Suppress all output (default: output is printed to STDOUT)') do |quiet|
+          options.output = StringIO.new
+        end
+      end
 
       def disable_ssl
         on('-U', '--no-ssl', 'Disable SSL (default: SSL is enabled)') do |use_ssl|
@@ -184,7 +193,7 @@ module Twurl
 
       def help
         on_tail("-h", "--help", "Show this message") do
-          puts self
+          options.output.puts self
           exit
         end
       end
@@ -216,15 +225,3 @@ module Twurl
     end
   end
 end
-
-__END__
-First things first you need to authorize an account to use a consumer key and secret.
-
-If you don't know your consumer key go here and register an OAuth
-application: http://url
-
-Example:
-
-  twurl authorize -u noradio -p password   \
-                  -c HQsAGcVm5MQT3n6j7qVJw \
-                  -s TFbERBg8mAanMaAkhlyILQ16Stk2oEUzezr9pBSv1FU
