@@ -84,6 +84,7 @@ class Twurl::RCFile::UpdatingTest < Test::Unit::TestCase
 
     rcfile << client
     assert_equal client.username, rcfile.default_profile
+    assert rcfile.has_oauth_profile_for_username?(client.username)
     assert_equal({client.username => client.to_hash}, rcfile.profiles)
   end
 
@@ -92,12 +93,46 @@ class Twurl::RCFile::UpdatingTest < Test::Unit::TestCase
 
     rcfile << first_client
     assert_equal first_client.username, rcfile.default_profile
+    assert rcfile.has_oauth_profile_for_username?(first_client.username)
 
-    additional_client = Twurl::OAuthClient.test_exemplar(:username => 'additiona_examplar_username')
+    additional_client = Twurl::OAuthClient.test_exemplar(:username => 'additional_examplar_username')
+
     rcfile << additional_client
-
     assert_equal first_client.username, rcfile.default_profile
+    assert rcfile.has_oauth_profile_for_username?(additional_client.username)
+
     assert_equal({first_client.username => first_client.to_hash, additional_client.username => additional_client.to_hash},
                  rcfile.profiles)
   end
+end
+
+class Twurl::RCFile::SavingTest < Test::Unit::TestCase
+  attr_reader :rcfile
+  def setup
+    delete_rcfile
+    assert !rcfile_exists?
+    @rcfile = Twurl::RCFile.new
+    assert !rcfile_exists?
+  end
+
+  def teardown
+    delete_rcfile
+  end
+
+  def test_save_writes_profiles_to_disk
+    client = Twurl::OAuthClient.test_exemplar
+    rcfile << client
+    assert rcfile_exists?
+  end
+
+  private
+    def rcfile_exists?
+      File.exists?(Twurl::RCFile.file_path)
+    end
+
+    def delete_rcfile
+      File.unlink(Twurl::RCFile.file_path)
+    rescue Errno::ENOENT
+      # Do nothing
+    end
 end
