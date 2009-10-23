@@ -8,7 +8,8 @@ module Twurl
     end
 
     def perform_request_from_options(options)
-      CLI.options.output.puts client.send(options.request_method, options.path, options.data)
+      response = client.send(options.request_method, options.path, options.data)
+      CLI.options.output.puts response.body
     end
   end
 end

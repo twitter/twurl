@@ -8,7 +8,8 @@ to get a consumer key and secret.
   http://twitter.com/apps/new
 
 When you have your consumer key and its secret you authorize 
-your Twitter account to make API requests with your consumer key and secret.
+your Twitter account to make API requests with your consumer key 
+and secret.
 
   % twurl authorize -u username -p password      \ 
                     --consumer-key the_key       \

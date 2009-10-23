@@ -26,7 +26,7 @@ module Twurl
                      end
         controller.dispatch(client, options)
       rescue Twurl::Exception => exception
-        abort(exeption.message)
+        abort(exception.message)
       end
 
       def parse_options(args)
@@ -110,26 +110,26 @@ module Twurl
       end
 
       def tutorial
-        on('-T', '--tutorial', "Narrative overview of Twurl commands") do
+        on('-T', '--tutorial', "Narrative overview of how to get started using Twurl") do
           options.output.puts IO.read(TUTORIAL)
           exit
         end
       end
 
       def consumer_key
-        on('-c', '--consumer-key [KEY]', "Your consumer key (required)") do |key|
-          options.consumer_key = key
+        on('-c', '--consumer-key [key]', "Your consumer key (required)") do |key|
+          options.consumer_key = key ? key : prompt_for('Consumer key')
         end
       end
 
       def consumer_secret
-        on('-s', '--consumer-secret [SECRET]', "Your consumer secret (required)") do |secret|
-          options.consumer_secret = secret
+        on('-s', '--consumer-secret [secret]', "Your consumer secret (required)") do |secret|
+          options.consumer_secret = secret ? secret : prompt_for('Consumer secret')
         end
       end
 
       def access_token
-        on('-a', '--access-token', 'Your access token') do |token|
+        on('-a', '--access-token [token]', 'Your access token') do |token|
           options.access_token = token
         end
       end
@@ -141,14 +141,14 @@ module Twurl
       end
 
       def username
-        on('-u', '--username [USERNAME]', 'Specify username to act on behalf of (required)') do |username|
+        on('-u', '--username [username]', 'Specify username to act on behalf of (required)') do |username|
           options.username = username
         end
       end
 
       def password
-        on('-p', '--password [PASSWORD]', 'Specify username to act on behalf of (required)') do |password|
-          options.password = password ? password : prompt_for_password
+        on('-p', '--password [password]', 'Specify password to act on behalf of (required)') do |password|
+          options.password = password ? password : prompt_for('Password')
         end
       end
 
@@ -159,7 +159,7 @@ module Twurl
       end
 
       def data
-        on('-d', '--data [DATA]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
+        on('-d', '--data [data]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
           data.split('&').each do |pair|
             key, value = pair.split('=')
             options.data[key] = value
@@ -168,7 +168,7 @@ module Twurl
       end
 
       def host
-        on('-H', '--host [HOST]', 'Specify host to make requests to (default: api.twitter.com)') do |host|
+        on('-H', '--host [host]', 'Specify host to make requests to (default: api.twitter.com)') do |host|
           options.host = host
         end
       end
@@ -186,7 +186,7 @@ module Twurl
       end
 
       def request_method
-        on('-X', '--request-method [METHOD]', 'Request method (default: GET)') do |request_method|
+        on('-X', '--request-method [method]', 'Request method (default: GET)') do |request_method|
           options.request_method = request_method.downcase
         end
       end
@@ -198,10 +198,14 @@ module Twurl
         end
       end
 
-      def prompt_for_password
+      def prompt_for(label)
         system "stty -echo"
-        print "Password: "
-        STDIN.gets.chomp
+        print "#{label}: "
+        result = STDIN.gets.chomp
+        options.output.puts
+        result
+      rescue Interrupt
+        exit
       ensure
         system "stty echo"
       end
