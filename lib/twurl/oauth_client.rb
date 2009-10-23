@@ -54,6 +54,10 @@ module Twurl
       EVAL
     end
 
+    def perform_request_from_options(options)
+      send(options.request_method, options.path, options.data)
+    end
+
     def exchange_credentials_for_access_token
       response = consumer.token_request(:post, consumer.access_token_path, nil, {}, client_auth_parameters)
       @token   = response[:oauth_token]
@@ -86,26 +90,25 @@ module Twurl
       end
     end
 
-    private
-      def consumer
-        @consumer ||=
-        begin
-          consumer = OAuth::Consumer.new(
-            consumer_key,
-            consumer_secret,
-            :site => CLI.options.base_url
-          )
-          consumer.http.set_debug_output(STDERR) if CLI.options.trace
-          if CLI.options.ssl?
-            consumer.http.use_ssl     = true
-            consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-          end
-          consumer
+    def consumer
+      @consumer ||=
+      begin
+        consumer = OAuth::Consumer.new(
+          consumer_key,
+          consumer_secret,
+          :site => CLI.options.base_url
+        )
+        consumer.http.set_debug_output(STDERR) if CLI.options.trace
+        if CLI.options.ssl?
+          consumer.http.use_ssl     = true
+          consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
+        consumer
       end
+    end
 
-      def access_token
-        @access_token ||= OAuth::AccessToken.new(consumer, token, secret)
-      end
+    def access_token
+      @access_token ||= OAuth::AccessToken.new(consumer, token, secret)
+    end
   end
 end

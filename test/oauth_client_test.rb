@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::OAuthClient::AbstractRCFileLoadingTest < Test::Unit::TestCase
+class Twurl::OAuthClient::AbstractOAuthClientTest < Test::Unit::TestCase
   attr_reader :client, :options
   def setup
     Twurl::OAuthClient.instance_variable_set(:@rcfile, nil)
@@ -11,10 +11,17 @@ class Twurl::OAuthClient::AbstractRCFileLoadingTest < Test::Unit::TestCase
     options.password        = client.password
     options.consumer_key    = client.consumer_key
     options.consumer_secret = client.consumer_secret
+    options.base_url        = 'api.twitter.com'
+    options.request_method  = 'get'
+    options.path            = '/path/does/not/matter.xml'
+    options.data            = {}
+
+    Twurl::CLI.options      = options
   end
 
   def teardown
     super
+    Twurl::CLI.options = nil
     # Make sure we don't do any disk IO in these tests
     assert !File.exists?(Twurl::RCFile.file_path)
   end
@@ -24,7 +31,7 @@ class Twurl::OAuthClient::AbstractRCFileLoadingTest < Test::Unit::TestCase
   end
 end
 
-class Twurl::OAuthClient::BasicRCFileLoadingTest < Twurl::OAuthClient::AbstractRCFileLoadingTest
+class Twurl::OAuthClient::BasicRCFileLoadingTest < Twurl::OAuthClient::AbstractOAuthClientTest
   def test_rcfile_is_memoized
     mock.proxy(Twurl::RCFile).new.times(1)
 
@@ -41,7 +48,7 @@ class Twurl::OAuthClient::BasicRCFileLoadingTest < Twurl::OAuthClient::AbstractR
   end
 end
 
-class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::AbstractRCFileLoadingTest
+class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::AbstractOAuthClientTest
   def test_if_username_is_supplied_and_no_profile_exists_for_username_then_new_client_is_created
     mock(Twurl::OAuthClient).load_client_for_username(options.username).never
     mock(Twurl::OAuthClient).load_new_client_from_options(options).times(1)
@@ -72,7 +79,7 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
   end
 end
 
-class Twurl::OAuthClient::ClientLoadingForUsernameTest < Twurl::OAuthClient::AbstractRCFileLoadingTest
+class Twurl::OAuthClient::ClientLoadingForUsernameTest < Twurl::OAuthClient::AbstractOAuthClientTest
   def test_attempting_to_load_a_username_that_is_not_in_the_file_fails
     assert_nil Twurl::OAuthClient.rcfile[client.username]
 
@@ -91,7 +98,7 @@ class Twurl::OAuthClient::ClientLoadingForUsernameTest < Twurl::OAuthClient::Abs
   end
 end
 
-class Twurl::OAuthClient::DefaultClientLoadingTest < Twurl::OAuthClient::AbstractRCFileLoadingTest
+class Twurl::OAuthClient::DefaultClientLoadingTest < Twurl::OAuthClient::AbstractOAuthClientTest
   def test_loading_default_client_when_there_is_none_fails
     assert_nil Twurl::OAuthClient.rcfile.default_profile
 
@@ -112,7 +119,7 @@ class Twurl::OAuthClient::DefaultClientLoadingTest < Twurl::OAuthClient::Abstrac
   end
 end
 
-class Twurl::OAuthClient::NewClientLoadingFromOptionsTest < Twurl::OAuthClient::AbstractRCFileLoadingTest
+class Twurl::OAuthClient::NewClientLoadingFromOptionsTest < Twurl::OAuthClient::AbstractOAuthClientTest
   attr_reader :new_client
   def setup
     super
@@ -125,5 +132,35 @@ class Twurl::OAuthClient::NewClientLoadingFromOptionsTest < Twurl::OAuthClient::
 
   def test_oauth_options_are_passed_through
     assert_equal client.to_hash, new_client.to_hash
+  end
+end
+
+class Twurl::OAuthClient::PerformingRequestsFromOptionsTest < Twurl::OAuthClient::AbstractOAuthClientTest
+  def test_request_is_made_using_request_method_and_path_and_data_in_options
+    client = Twurl::OAuthClient.test_exemplar
+    mock(client).get(options.path, options.data)
+
+    client.perform_request_from_options(options)
+  end
+end
+
+class Twurl::OAuthClient::CredentialsForAccessTokenExchangeTest < Twurl::OAuthClient::AbstractOAuthClientTest
+  def test_successful_exchange_parses_token_and_secret_from_response_body
+    parsed_response = {:oauth_token        => "123456789",
+                       :oauth_token_secret => "abcdefghi",
+                       :user_id            => "3191321",
+                       :screen_name        => "noradio",
+                       :x_auth_expires     => "0"}
+
+    mock(client.consumer).
+      token_request(:post,
+                    client.consumer.access_token_path,
+                    nil,
+                    {},
+                    client.client_auth_parameters) { parsed_response }
+
+   assert client.needs_to_authorize?
+   client.exchange_credentials_for_access_token
+   assert !client.needs_to_authorize?
   end
 end

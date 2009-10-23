@@ -10,8 +10,7 @@ module Twurl
     @output              ||= STDOUT
 
     class << self
-      attr_reader   :options
-      attr_accessor :output
+      attr_accessor :options, :output
 
       def run(args)
         options = parse_options(args)
