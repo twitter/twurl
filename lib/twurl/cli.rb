@@ -1,6 +1,6 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS     = %w(authorize)
+    SUPPORTED_COMMANDS     = %w(authorize accounts)
     DEFAULT_COMMAND        = 'request'
     DEFAULT_REQUEST_METHOD = 'get'
     DEFAULT_HOST           = 'api.twitter.com'
@@ -21,6 +21,8 @@ module Twurl
         controller = case options.command
                      when 'authorize'
                        AuthorizationController
+                     when 'accounts'
+                       AccountInformationController
                      when 'request'
                        RequestController
                      end
@@ -74,6 +76,10 @@ module Twurl
         options.command          = extract_command!(arguments)
         options.path             = extract_path!(arguments)
         options
+      end
+      
+      def puts(*args, &block)
+        options.output.puts(*args, &block)
       end
 
       private
@@ -141,13 +147,13 @@ module Twurl
       end
 
       def username
-        on('-u', '--username [username]', 'Specify username to act on behalf of (required)') do |username|
+        on('-u', '--username [username]', 'Username of account to authorize (required)') do |username|
           options.username = username
         end
       end
 
       def password
-        on('-p', '--password [password]', 'Specify password to act on behalf of (required)') do |password|
+        on('-p', '--password [password]', 'Password of account to authorize (required)') do |password|
           options.password = password ? password : prompt_for('Password')
         end
       end

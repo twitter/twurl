@@ -31,7 +31,7 @@ Similar to curl, a GET request is performed by default.
 
 You can implicitly perform a POST request by passing the -d option.
 
-  % twurl -d "status=Testing twurl!" /1/statuses/update.xml
+  % twurl -d 'status=Testing twurl' /1/statuses/update.xml
   
 You can explicitly specify what request method to perform with 
 the -X (or --request-method) option.
