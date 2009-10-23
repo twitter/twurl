@@ -1,30 +1,45 @@
 module Twurl
   class OAuthClient
     class << self
-      def load_from_rcfile
-        new(RCFile.load)
+      def rcfile(reload = false)
+        if reload || @rcfile.nil?
+          @rcfile = RCFile.new
+        end
+        @rcfile
+      end
+
+      def load_from_options(options)
+        if rcfile.has_oauth_profile_for_username?(options.username)
+          load_client_for_username(options.username)
+        else
+          options.username ? load_new_client_from_options(options) : load_default_client
+        end
+      end
+
+      def load_client_for_username(username)
+        new(rcfile[username]) || raise("No profile for #{username}")
+      end
+
+      def load_new_client_from_options(options)
+        new(options.oauth_client_options.merge('password' => options.password))
+      end
+
+      def load_default_client
+        raise "You must authorize first" unless rcfile.default_profile
+        new(rcfile[rcfile.default_profile])
       end
     end
 
-    ATTRIBUTES = [:consumer_key, :consumer_secret, :token, :secret]
-    attr_reader *ATTRIBUTES
+    OAUTH_CLIENT_OPTIONS = %w[username consumer_key consumer_secret token secret]
+    attr_reader *OAUTH_CLIENT_OPTIONS
+    attr_reader :password
     def initialize(options = {})
-      @username        = options[:username]
-      @password        = options[:password]
-      @consumer_key    = options[:consumer_key]
-      @consumer_secret = options[:consumer_secret]
-      @token           = options[:token]
-      @secret          = options[:secret]
-    end
-
-    def authorize(request_token, request_secret, options = {})
-      request_token = OAuth::RequestToken.new(consumer, request_token, request_secret)
-      @access_token = request_token.get_access_token(options)
-      if authorized?
-        @token  = @access_token.token
-        @secret = @access_token.secret
-      end
-      @access_token
+      @username        = options['username']
+      @password        = options['password']
+      @consumer_key    = options['consumer_key']
+      @consumer_secret = options['consumer_secret']
+      @token           = options['token']
+      @secret          = options['secret']
     end
 
     [:get, :post, :put, :delete, :options, :head, :copy].each do |request_method|
@@ -35,20 +50,18 @@ module Twurl
       EVAL
     end
 
-    def exchange_request_token_for_access_token
-      system("open '#{request_token.authorize_url}'")
-      print "Enter PIN: "
-      pin = gets.chomp
+    def exchange_credentials_for_access_token
+      response = consumer.token_request(:post, consumer.access_token_path, nil, {}, client_auth_parameters)
+      @token   = response[:oauth_token]
+      @secret  = response[:oauth_token_secret]
+    end
 
-      access_token = authorize(
-        request_token.token,
-        request_token.secret,
-        :oauth_verifier => pin
-      )
+    def client_auth_parameters
+      {:x_auth_username => username, :x_auth_password => password, :x_auth_mode => 'client_auth'}
     end
 
     def authorized?
-      oauth_response = access_token.get('/account/verify_credentials.json')
+      oauth_response = access_token.get('/1/account/verify_credentials.json')
       oauth_response.class == Net::HTTPOK
     end
 
@@ -57,20 +70,11 @@ module Twurl
     end
 
     def save
-      RCFile.write(self)
-    end
-
-    def request_token(options={})
-      @request_token ||= consumer.get_request_token(options)
-    end
-
-    def authentication_request_token(options={})
-      consumer.options[:authorize_path] = '/oauth/authenticate'
-      request_token(options)
+      self.class.rcfile << self
     end
 
     def to_hash
-      ATTRIBUTES.inject({}) do |hash, attribute|
+      OAUTH_CLIENT_OPTIONS.inject({}) do |hash, attribute|
         if value = send(attribute)
           hash[attribute] = value
         end
@@ -78,17 +82,22 @@ module Twurl
       end
     end
 
-    def to_rcfile
-      to_hash.to_yaml
-    end
-
     private
       def consumer
-        @consumer ||= OAuth::Consumer.new(
-          consumer_key,
-          consumer_secret,
-          :site => "http://api.twitter.com/"
-        )
+        @consumer ||=
+        begin
+          consumer = OAuth::Consumer.new(
+            consumer_key,
+            consumer_secret,
+            :site => CLI.options.base_url
+          )
+          consumer.http.set_debug_output(STDERR) if CLI.options.trace
+          if CLI.options.ssl?
+            consumer.http.use_ssl     = true
+            consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          end
+          consumer
+        end
       end
 
       def access_token

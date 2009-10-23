@@ -3,53 +3,62 @@ module Twurl
     SUPPORTED_COMMANDS     = %w(authorize)
     DEFAULT_COMMAND        = 'request'
     DEFAULT_REQUEST_METHOD = 'get'
+    DEFAULT_HOST           = 'api.twitter.com'
+    DEFAULT_PROTOCOL       = 'https'
     PATH_PATTERN           = /^\/\w+/
 
     class << self
+      attr_reader :options
+
       def run(args)
         options = parse_options(args)
         dispatch(options)
       end
 
       def dispatch(options)
-        case options.command
-        when 'authorize'
-          AuthorizationController.dispatch(options)
-        when 'request'
-          RequestController.dispatch(client, options)
-        else
-          abort("Unsupported command: #{options.command}")
-        end
+        client     = OAuthClient.load_from_options(options)
+        controller = case options.command
+                     when 'authorize'
+                       AuthorizationController
+                     when 'request'
+                       RequestController
+                     else
+                       abort("Unsupported command: #{options.command}")
+                     end
+        controller.dispatch(client, options)
       end
 
       def parse_options(args)
         arguments = args.dup
 
-        options       = OpenStruct.new
-        options.trace = false
-        options.data  = {}
+        @options        = Options.new
+        options.trace   = false
+        options.data    = {}
 
         option_parser = OptionParser.new do |o|
-          o.extend Options
-          o.options = options
+          o.extend AvailableOptions
 
-          o.banner = "Usage: twurl authorize -u username -p password -c HQsAGcVm5MQT3n6j7qVJw -s asdfasd223sd2\n" +
+          o.banner = "Usage: twurl authorize -u username -p password --consumer-key HQsAGcVm5MQT3n6j7qVJw --consumer-secret asdfasd223sd2\n" +
                      "       twurl [options] /statuses/home_timeline.xml"
 
           o.section "Getting started:" do
             tutorial
           end
 
-          o.section "Registration options:" do
+          o.section "Authorization options:" do
+            username
+            password
             consumer_key
             consumer_secret
             access_token
-            access_token_secret
+            token_secret
           end
 
           o.section "Common options:" do
             trace
             data
+            host
+            disable_ssl
             request_method
             help
           end
@@ -57,6 +66,8 @@ module Twurl
 
         arguments                = option_parser.parse!(args)
         options.request_method ||= options.data.empty? ? DEFAULT_REQUEST_METHOD : 'post'
+        options.protocol       ||= DEFAULT_PROTOCOL
+        options.host           ||= DEFAULT_HOST
         options.command          = extract_command!(arguments)
         options.path             = extract_path!(arguments)
         options
@@ -83,11 +94,9 @@ module Twurl
         end
     end
 
-    module Options
-      def self.extended(parser)
-        class << parser
-          attr_accessor :options
-        end
+    module AvailableOptions
+      def options
+        CLI.options
       end
 
       def section(heading, &block)
@@ -105,13 +114,13 @@ module Twurl
       end
 
       def consumer_key
-        on('-c', '--consumer-key', "Your consumer key") do |key|
+        on('-c', '--consumer-key [KEY]', "Your consumer key (required)") do |key|
           options.consumer_key = key
         end
       end
 
       def consumer_secret
-        on('-s', '--consumer-secret', "Your consumer secret") do |secret|
+        on('-s', '--consumer-secret [SECRET]', "Your consumer secret (required)") do |secret|
           options.consumer_secret = secret
         end
       end
@@ -122,9 +131,21 @@ module Twurl
         end
       end
 
-      def access_token_secret
-        on('-S', '--access-token-secret', "Your access token secret") do |secret|
-          options.access_token_secret = secret
+      def token_secret
+        on('-S', '--token-secret', "Your token secret") do |secret|
+          options.token_secret = secret
+        end
+      end
+
+      def username
+        on('-u', '--username [USERNAME]', 'Specify username to act on behalf of (required)') do |username|
+          options.username = username
+        end
+      end
+
+      def password
+        on('-p', '--password [PASSWORD]', 'Specify username to act on behalf of (required)') do |password|
+          options.password = password ? password : prompt_for_password
         end
       end
 
@@ -143,6 +164,18 @@ module Twurl
         end
       end
 
+      def host
+        on('-H', '--host [HOST]', 'Specify host to make requests to (default: api.twitter.com)') do |host|
+          options.host = host
+        end
+      end
+
+      def disable_ssl
+        on('-U', '--no-ssl', 'Disable SSL (default: SSL is enabled)') do |use_ssl|
+          options.protocol = 'http'
+        end
+      end
+
       def request_method
         on('-X', '--request-method [METHOD]', 'Request method (default: GET)') do |request_method|
           options.request_method = request_method.downcase
@@ -154,6 +187,31 @@ module Twurl
           puts self
           exit
         end
+      end
+
+      def prompt_for_password
+        system "stty -echo"
+        print "Password: "
+        STDIN.gets.chomp
+      ensure
+        system "stty echo"
+      end
+    end
+
+    class Options < OpenStruct
+      def oauth_client_options
+        OAuthClient::OAUTH_CLIENT_OPTIONS.inject({}) do |options, option|
+          options[option] = send(option)
+          options
+        end
+      end
+
+      def base_url
+        "#{protocol}://#{host}"
+      end
+
+      def ssl?
+        protocol == 'https'
       end
     end
   end
