@@ -117,7 +117,7 @@ module Twurl
 
       def tutorial
         on('-T', '--tutorial', "Narrative overview of how to get started using Twurl") do
-          options.output.puts IO.read(TUTORIAL)
+          CLI.puts IO.read(TUTORIAL)
           exit
         end
       end
