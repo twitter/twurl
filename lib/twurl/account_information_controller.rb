@@ -5,10 +5,13 @@ module Twurl
       if rcfile.empty?
         CLI.puts "No authorized accounts"
       else
-        rcfile.profiles.each do |account_name, configuration|
-          account_summary = "#{account_name}: #{configuration['consumer_key']}"
-          account_summary << " (default)" if rcfile.default_profile == account_name
-          CLI.puts account_summary
+        rcfile.profiles.each do |account_name, configurations|
+          CLI.puts account_name
+          configurations.each do |consumer_key, _|
+            account_summary = "  #{consumer_key}"
+            account_summary << " (default)" if rcfile.default_profile == [account_name, consumer_key]
+            CLI.puts account_summary
+          end
         end
       end
     end
