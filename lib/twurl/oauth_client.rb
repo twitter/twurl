@@ -9,15 +9,16 @@ module Twurl
       end
 
       def load_from_options(options)
-        if rcfile.has_oauth_profile_for_username?(options.username)
-          load_client_for_username(options.username)
+        if rcfile.has_oauth_profile_for_username_with_consumer_key?(options.username, options.consumer_key)
+          load_client_for_username_and_consumer_key(options.username, options.consumer_key)
         else
           options.username ? load_new_client_from_options(options) : load_default_client
         end
       end
 
-      def load_client_for_username(username)
-        if attributes = rcfile[username]
+      def load_client_for_username_and_consumer_key(username, consumer_key)
+        user_profiles = rcfile[username]
+        if user_profiles && attributes = user_profiles[consumer_key]
           new(attributes)
         else
           raise Exception, "No profile for #{username}"
@@ -30,7 +31,7 @@ module Twurl
 
       def load_default_client
         raise Exception, "You must authorize first" unless rcfile.default_profile
-        new(rcfile[rcfile.default_profile])
+        load_client_for_username_and_consumer_key(*rcfile.default_profile)
       end
     end
 

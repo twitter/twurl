@@ -58,13 +58,11 @@ class Twurl::RCFile::DefaultProfileFromDefaultRCFileTest < Test::Unit::TestCase
   end
 
   def test_setting_default_profile
-    username = 'noradio'
-    options  = Twurl::CLI::Options.new
-    options.username = username
+    options  = Twurl::CLI::Options.test_exemplar
 
     client = Twurl::OAuthClient.load_new_client_from_options(options)
     rcfile.default_profile = client
-    assert_equal username, rcfile.default_profile
+    assert_equal [options.username, options.consumer_key], rcfile.default_profile
   end
 end
 
@@ -83,26 +81,30 @@ class Twurl::RCFile::UpdatingTest < Test::Unit::TestCase
     client = Twurl::OAuthClient.test_exemplar
 
     rcfile << client
-    assert_equal client.username, rcfile.default_profile
-    assert rcfile.has_oauth_profile_for_username?(client.username)
-    assert_equal({client.username => client.to_hash}, rcfile.profiles)
+    assert_equal [client.username, client.consumer_key], rcfile.default_profile
+    assert rcfile.has_oauth_profile_for_username_with_consumer_key?(client.username, client.consumer_key)
+    assert_equal({client.username => {client.consumer_key => client.to_hash}}, rcfile.profiles)
   end
 
   def test_adding_additional_clients_does_not_change_default_profile
     first_client = Twurl::OAuthClient.test_exemplar
 
     rcfile << first_client
-    assert_equal first_client.username, rcfile.default_profile
-    assert rcfile.has_oauth_profile_for_username?(first_client.username)
+    assert_equal [first_client.username, first_client.consumer_key], rcfile.default_profile
+    assert rcfile.has_oauth_profile_for_username_with_consumer_key?(first_client.username, first_client.consumer_key)
 
-    additional_client = Twurl::OAuthClient.test_exemplar(:username => 'additional_examplar_username')
+    additional_client = Twurl::OAuthClient.test_exemplar(:username => 'additional_exemplar_username')
 
     rcfile << additional_client
-    assert_equal first_client.username, rcfile.default_profile
-    assert rcfile.has_oauth_profile_for_username?(additional_client.username)
+    assert_equal [first_client.username, first_client.consumer_key], rcfile.default_profile
+    assert rcfile.has_oauth_profile_for_username_with_consumer_key?(additional_client.username, additional_client.consumer_key)
 
-    assert_equal({first_client.username => first_client.to_hash, additional_client.username => additional_client.to_hash},
-                 rcfile.profiles)
+    expected_profiles = {
+      first_client.username      => {first_client.consumer_key      => first_client.to_hash},
+      additional_client.username => {additional_client.consumer_key => additional_client.to_hash}
+    }
+
+    assert_equal expected_profiles, rcfile.profiles
   end
 end
 

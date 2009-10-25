@@ -5,12 +5,8 @@ class Twurl::OAuthClient::AbstractOAuthClientTest < Test::Unit::TestCase
   def setup
     Twurl::OAuthClient.instance_variable_set(:@rcfile, nil)
 
+    @options                = Twurl::CLI::Options.test_exemplar
     @client                 = Twurl::OAuthClient.test_exemplar
-    @options                = Twurl::CLI::Options.new
-    options.username        = client.username
-    options.password        = client.password
-    options.consumer_key    = client.consumer_key
-    options.consumer_secret = client.consumer_secret
     options.base_url        = 'api.twitter.com'
     options.request_method  = 'get'
     options.path            = '/path/does/not/matter.xml'
@@ -61,7 +57,7 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
     mock(Twurl::OAuthClient.rcfile).save.times(1)
     Twurl::OAuthClient.rcfile << client
 
-    mock(Twurl::OAuthClient).load_client_for_username(options.username).times(1)
+    mock(Twurl::OAuthClient).load_client_for_username_and_consumer_key(options.username, options.consumer_key).times(1)
     mock(Twurl::OAuthClient).load_new_client_from_options(options).never
     mock(Twurl::OAuthClient).load_default_client.never
 
@@ -84,7 +80,7 @@ class Twurl::OAuthClient::ClientLoadingForUsernameTest < Twurl::OAuthClient::Abs
     assert_nil Twurl::OAuthClient.rcfile[client.username]
 
     assert_raises Twurl::Exception do
-      Twurl::OAuthClient.load_client_for_username(client.username)
+      Twurl::OAuthClient.load_client_for_username_and_consumer_key(client.username, client.consumer_key)
     end
   end
 
@@ -93,7 +89,7 @@ class Twurl::OAuthClient::ClientLoadingForUsernameTest < Twurl::OAuthClient::Abs
 
     Twurl::OAuthClient.rcfile << client
 
-    client_from_file = Twurl::OAuthClient.load_client_for_username(client.username)
+    client_from_file = Twurl::OAuthClient.load_client_for_username_and_consumer_key(client.username, client.consumer_key)
     assert_equal client.to_hash, client_from_file.to_hash
   end
 end
@@ -111,7 +107,7 @@ class Twurl::OAuthClient::DefaultClientLoadingTest < Twurl::OAuthClient::Abstrac
     mock(Twurl::OAuthClient.rcfile).save.times(1)
 
     Twurl::OAuthClient.rcfile << client
-    assert_equal client.username, Twurl::OAuthClient.rcfile.default_profile
+    assert_equal [client.username, client.consumer_key], Twurl::OAuthClient.rcfile.default_profile
 
     client_from_file = Twurl::OAuthClient.load_default_client
 

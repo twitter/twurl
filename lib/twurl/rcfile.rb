@@ -24,7 +24,7 @@ module Twurl
     def initialize
       @data = self.class.load
     end
-    
+
     def empty?
       data == self.class.default_rcfile_structure
     end
@@ -48,22 +48,23 @@ module Twurl
     end
 
     def default_profile=(profile)
-      configuration['default_profile'] = profile.username
+      configuration['default_profile'] = [profile.username, profile.consumer_key]
     end
 
     def configuration
       data['configuration']
     end
 
-    def has_oauth_profile_for_username?(username)
-      !self[username].nil?
+    def has_oauth_profile_for_username_with_consumer_key?(username, consumer_key)
+      user_profiles = self[username]
+      !user_profiles.nil? && !user_profiles[consumer_key].nil?
     end
 
     def <<(oauth_client)
       client_from_file = self[oauth_client.username] || {}
-      client_from_file.update(oauth_client.to_hash)
-      profiles[oauth_client.username] = client_from_file
-      self.default_profile = oauth_client unless default_profile
+      client_from_file[oauth_client.consumer_key] = oauth_client.to_hash
+      (profiles[oauth_client.username] ||= {}).update(client_from_file)
+      self.default_profile  = oauth_client unless default_profile
       save
     end
   end
