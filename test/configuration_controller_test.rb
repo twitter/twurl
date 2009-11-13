@@ -1,5 +1,20 @@
 require File.dirname(__FILE__) + '/test_helper'
 
+class Twurl::ConfigurationController::DispatchTest < Test::Unit::TestCase
+  def test_error_message_is_displayed_if_setting_is_unrecognized
+    options = Twurl::CLI::Options.test_exemplar
+    client  = Twurl::OAuthClient.test_exemplar
+
+    options.subcommands = ['unrecognized', 'value']
+
+    mock(Twurl::CLI).puts(Twurl::ConfigurationController::UNRECOGNIZED_SETTING_MESSAGE % 'unrecognized').times(1)
+    mock(Twurl::OAuthClient.rcfile).save.times(0)
+
+    controller = Twurl::ConfigurationController.new(client, options)
+    controller.dispatch
+  end
+end
+
 class Twurl::ConfigurationController::DispatchDefaultSettingTest < Test::Unit::TestCase
   def test_setting_default_profile_just_by_username
     options = Twurl::CLI::Options.test_exemplar

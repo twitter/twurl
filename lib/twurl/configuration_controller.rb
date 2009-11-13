@@ -1,5 +1,6 @@
 module Twurl
   class ConfigurationController < AbstractCommandController
+    UNRECOGNIZED_SETTING_MESSAGE = "Unknown configuration setting: '%s'"
     def dispatch
       case options.subcommands.first
       when 'default'
@@ -14,7 +15,7 @@ module Twurl
           OAuthClient.rcfile.save
         end
       else
-        CLI.puts "Unknown configuration setting: '#{options.subcommands.first}'"
+        CLI.puts(UNRECOGNIZED_SETTING_MESSAGE % options.subcommands.first)
       end
     end
   end
