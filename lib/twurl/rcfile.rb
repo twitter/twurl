@@ -86,7 +86,7 @@ module Twurl
       client_from_file = self[oauth_client.username] || {}
       client_from_file[oauth_client.consumer_key] = oauth_client.to_hash
       (profiles[oauth_client.username] ||= {}).update(client_from_file)
-      self.default_profile  = oauth_client unless default_profile
+      self.default_profile = oauth_client unless default_profile
       save
     end
   end

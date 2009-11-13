@@ -1,6 +1,6 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS     = %w(authorize accounts alias)
+    SUPPORTED_COMMANDS     = %w(authorize accounts alias set)
     DEFAULT_COMMAND        = 'request'
     DEFAULT_REQUEST_METHOD = 'get'
     DEFAULT_HOST           = 'api.twitter.com'
@@ -26,6 +26,8 @@ module Twurl
                        AccountInformationController
                      when 'alias'
                        AliasesController
+                     when 'set'
+                       ConfigurationController
                      when 'request'
                        RequestController
                      end

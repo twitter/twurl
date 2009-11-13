@@ -1,9 +1,11 @@
 module Twurl
   class AccountInformationController < AbstractCommandController
+    NO_AUTHORIZED_ACCOUNTS_MESSAGE = "No authorized accounts"
+
     def dispatch
       rcfile = OAuthClient.rcfile
       if rcfile.empty?
-        CLI.puts "No authorized accounts"
+        CLI.puts NO_AUTHORIZED_ACCOUNTS_MESSAGE
       else
         profiles = rcfile.profiles
         profiles.keys.sort.each do |account_name|
