@@ -4,6 +4,7 @@ module Twurl
       if client.needs_to_authorize?
         raise Exception, "You need to authorize first."
       end
+      options.path ||= OAuthClient.rcfile.alias_from_options(options)
       perform_request
     end
 

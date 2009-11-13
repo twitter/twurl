@@ -19,6 +19,7 @@ module Twurl
           options.password        = 'secret'
           options.consumer_key    = '123456789'
           options.consumer_secret = '987654321'
+          options.subcommands     = []
           options
         end
       end

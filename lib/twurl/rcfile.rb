@@ -55,6 +55,28 @@ module Twurl
       data['configuration']
     end
 
+    def alias(name, path)
+      data['aliases'] ||= {}
+      data['aliases'][name] = path
+      save
+    end
+
+    def aliases
+      data['aliases']
+    end
+
+    def alias_from_options(options)
+      options.subcommands.each do |potential_alias|
+        if path = alias_from_name(potential_alias)
+          break path
+        end
+      end
+    end
+
+    def alias_from_name(name)
+      aliases[name]
+    end
+
     def has_oauth_profile_for_username_with_consumer_key?(username, consumer_key)
       user_profiles = self[username]
       !user_profiles.nil? && !user_profiles[consumer_key].nil?

@@ -1,6 +1,6 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS     = %w(authorize accounts)
+    SUPPORTED_COMMANDS     = %w(authorize accounts alias)
     DEFAULT_COMMAND        = 'request'
     DEFAULT_REQUEST_METHOD = 'get'
     DEFAULT_HOST           = 'api.twitter.com'
@@ -24,6 +24,8 @@ module Twurl
                        AuthorizationController
                      when 'accounts'
                        AccountInformationController
+                     when 'alias'
+                       AliasesController
                      when 'request'
                        RequestController
                      end
@@ -43,7 +45,9 @@ module Twurl
           o.extend AvailableOptions
 
           o.banner = "Usage: twurl authorize -u username -p password --consumer-key HQsAGcVm5MQT3n6j7qVJw --consumer-secret asdfasd223sd2\n" +
-                     "       twurl [options] /statuses/home_timeline.xml"
+                     "       twurl [options] /statuses/home_timeline.xml\n"                                                                  +
+                     "\n"                                                                                                                    +
+                     "Supported Commands:\n#{SUPPORTED_COMMANDS.sort.join(', ')}"
 
           o.section "Getting started:" do
             tutorial
@@ -75,6 +79,7 @@ module Twurl
         options.host           ||= DEFAULT_HOST
         options.command          = extract_command!(arguments)
         options.path             = extract_path!(arguments)
+        options.subcommands      = arguments
         options
       end
 
