@@ -27,7 +27,7 @@ module Twurl
 
       def load_client_for_username(username)
         if user_profiles = rcfile[username]
-          if user_profile.values.size == 1
+          if user_profiles.values.size == 1
             new(user_profiles.values.first)
           else
             raise Exception, "There is more than one consumer key associated with #{username}. Please specify which consumer key you want as well."
