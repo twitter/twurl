@@ -11,6 +11,8 @@ module Twurl
     def perform_request
       response = client.perform_request_from_options(options)
       CLI.puts response.body
+    rescue URI::InvalidURIError
+      CLI.puts "No URI specified"
     end
   end
 end
