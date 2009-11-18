@@ -4,7 +4,7 @@ class Twurl::RequestController::AbstractTestCase < Test::Unit::TestCase
   attr_reader :options, :client, :controller
   def setup
     Twurl::CLI.output = StringIO.new
-    @options    = Twurl::CLI::Options.test_exemplar
+    @options    = Twurl::Options.test_exemplar
     @client     = Twurl::OAuthClient.test_exemplar
     @controller = Twurl::RequestController.new(client, options)
   end

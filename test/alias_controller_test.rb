@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/test_helper'
 class Twurl::AliasesController::DispatchTest < Test::Unit::TestCase
   attr_reader :options, :client
   def setup
-    @options = Twurl::CLI::Options.test_exemplar
+    @options = Twurl::Options.test_exemplar
     @client  = Twurl::OAuthClient.test_exemplar
 
     # Clean slate

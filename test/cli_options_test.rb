@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::CLI::Options::Test < Test::Unit::TestCase
+class Twurl::Options::Test < Test::Unit::TestCase
   attr_reader :options
   def setup
-    @options = Twurl::CLI::Options.new
+    @options = Twurl::Options.new
   end
 
   def test_base_url_is_built_from_protocol_and_host

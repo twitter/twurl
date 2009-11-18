@@ -10,6 +10,11 @@ library_files.each do |file|
 end
 
 module Twurl
+  @options ||= Options.new
+  class << self
+    attr_accessor :options
+  end
+
   class Exception < ::Exception
   end
 end

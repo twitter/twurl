@@ -10,7 +10,7 @@ module Twurl
     @output              ||= STDOUT
 
     class << self
-      attr_accessor :options, :output
+      attr_accessor :output
 
       def run(args)
         options = parse_options(args)
@@ -39,9 +39,9 @@ module Twurl
       def parse_options(args)
         arguments = args.dup
 
-        @options        = Options.new
-        options.trace   = false
-        options.data    = {}
+        Twurl.options         = Options.new
+        Twurl.options.trace   = false
+        Twurl.options.data    = {}
 
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
@@ -76,13 +76,13 @@ module Twurl
         end
 
         arguments                = option_parser.parse!(args)
-        options.request_method ||= options.data.empty? ? DEFAULT_REQUEST_METHOD : 'post'
-        options.protocol       ||= DEFAULT_PROTOCOL
-        options.host           ||= DEFAULT_HOST
-        options.command          = extract_command!(arguments)
-        options.path             = extract_path!(arguments)
-        options.subcommands      = arguments
-        options
+        Twurl.options.request_method ||= Twurl.options.data.empty? ? DEFAULT_REQUEST_METHOD : 'post'
+        Twurl.options.protocol       ||= DEFAULT_PROTOCOL
+        Twurl.options.host           ||= DEFAULT_HOST
+        Twurl.options.command          = extract_command!(arguments)
+        Twurl.options.path             = extract_path!(arguments)
+        Twurl.options.subcommands      = arguments
+        Twurl.options
       end
 
       def puts(*args, &block)
@@ -112,7 +112,7 @@ module Twurl
 
     module AvailableOptions
       def options
-        CLI.options
+        Twurl.options
       end
 
       def section(heading, &block)
@@ -223,22 +223,22 @@ module Twurl
         system "stty echo"
       end
     end
+  end
 
-    class Options < OpenStruct
-      def oauth_client_options
-        OAuthClient::OAUTH_CLIENT_OPTIONS.inject({}) do |options, option|
-          options[option] = send(option)
-          options
-        end
+  class Options < OpenStruct
+    def oauth_client_options
+      OAuthClient::OAUTH_CLIENT_OPTIONS.inject({}) do |options, option|
+        options[option] = send(option)
+        options
       end
+    end
 
-      def base_url
-        "#{protocol}://#{host}"
-      end
+    def base_url
+      "#{protocol}://#{host}"
+    end
 
-      def ssl?
-        protocol == 'https'
-      end
+    def ssl?
+      protocol == 'https'
     end
   end
 end

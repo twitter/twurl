@@ -109,10 +109,10 @@ module Twurl
         consumer = OAuth::Consumer.new(
           consumer_key,
           consumer_secret,
-          :site => CLI.options.base_url
+          :site => Twurl.options.base_url
         )
-        consumer.http.set_debug_output(STDERR) if CLI.options.trace
-        if CLI.options.ssl?
+        consumer.http.set_debug_output(STDERR) if Twurl.options.trace
+        if Twurl.options.ssl?
           consumer.http.use_ssl     = true
           consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end

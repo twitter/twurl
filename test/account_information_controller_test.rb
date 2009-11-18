@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/test_helper'
 class Twurl::AccountInformationController::DispatchWithNoAuthorizedAccountsTest < Test::Unit::TestCase
   attr_reader :options, :client, :controller
   def setup
-    @options    = Twurl::CLI::Options.new
+    @options    = Twurl::Options.new
     @client     = Twurl::OAuthClient.load_new_client_from_options(options)
     @controller = Twurl::AccountInformationController.new(client, options)
     mock(Twurl::OAuthClient.rcfile).empty? { true }
@@ -19,7 +19,7 @@ end
 class Twurl::AccountInformationController::DispatchWithOneAuthorizedAccountTest < Test::Unit::TestCase
   attr_reader :options, :client, :controller
   def setup
-    @options    = Twurl::CLI::Options.test_exemplar
+    @options    = Twurl::Options.test_exemplar
     @client     = Twurl::OAuthClient.load_new_client_from_options(options)
     mock(Twurl::OAuthClient.rcfile).save.times(1)
     Twurl::OAuthClient.rcfile << client
@@ -37,10 +37,10 @@ end
 class Twurl::AccountInformationController::DispatchWithOneUsernameThatHasAuthorizedMultipleAccountsTest < Test::Unit::TestCase
   attr_reader :default_client_options, :default_client, :other_client_options, :other_client, :controller
   def setup
-    @default_client_options = Twurl::CLI::Options.test_exemplar
+    @default_client_options = Twurl::Options.test_exemplar
     @default_client         = Twurl::OAuthClient.load_new_client_from_options(default_client_options)
 
-    @other_client_options             = Twurl::CLI::Options.test_exemplar
+    @other_client_options             = Twurl::Options.test_exemplar
     other_client_options.consumer_key = default_client_options.consumer_key.reverse
     @other_client                     = Twurl::OAuthClient.load_new_client_from_options(other_client_options)
     mock(Twurl::OAuthClient.rcfile).save.times(2)

@@ -92,4 +92,10 @@ namespace :dist do
       raise
     end
   end
+
+  desc "Unpack current version of library into the twitter.com vendor directory"
+  task :unpack_to_vendor => :repackage do
+    cd 'pkg'
+    system("gem unpack '#{spec.name}-#{spec.version}.gem' --target=$TWITTER/vendor/gems")
+  end
 end

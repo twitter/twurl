@@ -10,18 +10,16 @@ end
 Twurl::RCFile.directory = ENV['TMPDIR']
 
 module Twurl
-  class CLI
-    class Options
-      class << self
-        def test_exemplar
-          options                 = new
-          options.username        = 'exemplar_user_name'
-          options.password        = 'secret'
-          options.consumer_key    = '123456789'
-          options.consumer_secret = '987654321'
-          options.subcommands     = []
-          options
-        end
+  class Options
+    class << self
+      def test_exemplar
+        options                 = new
+        options.username        = 'exemplar_user_name'
+        options.password        = 'secret'
+        options.consumer_key    = '123456789'
+        options.consumer_secret = '987654321'
+        options.subcommands     = []
+        options
       end
     end
   end
@@ -29,7 +27,7 @@ module Twurl
   class OAuthClient
     class << self
       def test_exemplar(overrides = {})
-        options = Twurl::CLI::Options.test_exemplar
+        options = Twurl::Options.test_exemplar
 
         overrides.each do |attribute, value|
           options.send("#{attribute}=", value)

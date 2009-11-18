@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/test_helper'
 class Twurl::AuthorizationController::DispatchTest < Test::Unit::TestCase
   attr_reader :options, :client, :controller
   def setup
-    @options    = Twurl::CLI::Options.new
+    @options    = Twurl::Options.new
     @client     = Twurl::OAuthClient.load_new_client_from_options(options)
     @controller = Twurl::AuthorizationController.new(client, options)
   end

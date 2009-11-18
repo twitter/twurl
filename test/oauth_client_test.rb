@@ -5,19 +5,19 @@ class Twurl::OAuthClient::AbstractOAuthClientTest < Test::Unit::TestCase
   def setup
     Twurl::OAuthClient.instance_variable_set(:@rcfile, nil)
 
-    @options                = Twurl::CLI::Options.test_exemplar
+    @options                = Twurl::Options.test_exemplar
     @client                 = Twurl::OAuthClient.test_exemplar
     options.base_url        = 'api.twitter.com'
     options.request_method  = 'get'
     options.path            = '/path/does/not/matter.xml'
     options.data            = {}
 
-    Twurl::CLI.options      = options
+    Twurl.options           = options
   end
 
   def teardown
     super
-    Twurl::CLI.options = nil
+    Twurl.options = Twurl::Options.new
     # Make sure we don't do any disk IO in these tests
     assert !File.exists?(Twurl::RCFile.file_path)
   end

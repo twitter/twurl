@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/test_helper'
 
 class Twurl::ConfigurationController::DispatchTest < Test::Unit::TestCase
   def test_error_message_is_displayed_if_setting_is_unrecognized
-    options = Twurl::CLI::Options.test_exemplar
+    options = Twurl::Options.test_exemplar
     client  = Twurl::OAuthClient.test_exemplar
 
     options.subcommands = ['unrecognized', 'value']
@@ -17,7 +17,7 @@ end
 
 class Twurl::ConfigurationController::DispatchDefaultSettingTest < Test::Unit::TestCase
   def test_setting_default_profile_just_by_username
-    options = Twurl::CLI::Options.test_exemplar
+    options = Twurl::Options.test_exemplar
     client  = Twurl::OAuthClient.test_exemplar
 
     options.subcommands = ['default', client.username]
@@ -30,7 +30,7 @@ class Twurl::ConfigurationController::DispatchDefaultSettingTest < Test::Unit::T
   end
 
   def test_setting_default_profile_by_username_and_consumer_key
-    options = Twurl::CLI::Options.test_exemplar
+    options = Twurl::Options.test_exemplar
     client  = Twurl::OAuthClient.test_exemplar
 
     options.subcommands = ['default', client.username, client.consumer_key]

@@ -58,7 +58,7 @@ class Twurl::RCFile::DefaultProfileFromDefaultRCFileTest < Test::Unit::TestCase
   end
 
   def test_setting_default_profile
-    options  = Twurl::CLI::Options.test_exemplar
+    options  = Twurl::Options.test_exemplar
 
     client = Twurl::OAuthClient.load_new_client_from_options(options)
     rcfile.default_profile = client
