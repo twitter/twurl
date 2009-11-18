@@ -14,9 +14,6 @@ class Twurl::Options::Test < Test::Unit::TestCase
   end
 
   def test_ssl_is_enabled_if_the_protocol_is_https
-    assert_nil options.protocol
-    assert !options.ssl?
-
     options.protocol = 'http'
     assert !options.ssl?
 

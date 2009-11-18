@@ -24,7 +24,7 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
   module RequestMethodParsingTests
     def test_request_method_is_default_if_unspecified
       options = Twurl::CLI.parse_options(['/1/url/does/not/matter.xml'])
-      assert_equal Twurl::CLI::DEFAULT_REQUEST_METHOD, options.request_method
+      assert_equal Twurl::Options::DEFAULT_REQUEST_METHOD, options.request_method
     end
 
     def test_specifying_a_request_method_extracts_and_normalizes_request_method
@@ -96,12 +96,12 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
   module HostOptionTests
     def test_not_specifying_host_sets_it_to_the_default
       options = Twurl::CLI.parse_options([])
-      assert_equal Twurl::CLI::DEFAULT_HOST, options.host
+      assert_equal Twurl::Options::DEFAULT_HOST, options.host
     end
 
     def test_setting_host_updates_to_requested_value
       custom_host = 'localhost:3000'
-      assert_not_equal Twurl::CLI::DEFAULT_HOST, custom_host
+      assert_not_equal Twurl::Options::DEFAULT_HOST, custom_host
 
       [['-H', custom_host], ['--host', custom_host]].each do |option_combination|
         options = Twurl::CLI.parse_options(option_combination)
@@ -110,5 +110,4 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
     end
   end
   include HostOptionTests
-
 end

@@ -2,9 +2,6 @@ module Twurl
   class CLI
     SUPPORTED_COMMANDS     = %w(authorize accounts alias set)
     DEFAULT_COMMAND        = 'request'
-    DEFAULT_REQUEST_METHOD = 'get'
-    DEFAULT_HOST           = 'api.twitter.com'
-    DEFAULT_PROTOCOL       = 'https'
     PATH_PATTERN           = /^\/\w+/
     TUTORIAL               = File.dirname(__FILE__) + '/../../TUTORIAL'
     @output              ||= STDOUT
@@ -75,13 +72,10 @@ module Twurl
           end
         end
 
-        arguments                = option_parser.parse!(args)
-        Twurl.options.request_method ||= Twurl.options.data.empty? ? DEFAULT_REQUEST_METHOD : 'post'
-        Twurl.options.protocol       ||= DEFAULT_PROTOCOL
-        Twurl.options.host           ||= DEFAULT_HOST
-        Twurl.options.command          = extract_command!(arguments)
-        Twurl.options.path             = extract_path!(arguments)
-        Twurl.options.subcommands      = arguments
+        arguments                 = option_parser.parse!(args)
+        Twurl.options.command     = extract_command!(arguments)
+        Twurl.options.path        = extract_path!(arguments)
+        Twurl.options.subcommands = arguments
         Twurl.options
       end
 
@@ -226,6 +220,10 @@ module Twurl
   end
 
   class Options < OpenStruct
+    DEFAULT_REQUEST_METHOD = 'get'
+    DEFAULT_HOST           = 'api.twitter.com'
+    DEFAULT_PROTOCOL       = 'https'
+
     def oauth_client_options
       OAuthClient::OAUTH_CLIENT_OPTIONS.inject({}) do |options, option|
         options[option] = send(option)
@@ -239,6 +237,22 @@ module Twurl
 
     def ssl?
       protocol == 'https'
+    end
+
+    def debug_output_io
+      super || STRDERR
+    end
+
+    def request_method
+      super || (data.empty? ? DEFAULT_REQUEST_METHOD : 'post')
+    end
+
+    def protocol
+      super || DEFAULT_PROTOCOL
+    end
+
+    def host
+      super || DEFAULT_HOST
     end
   end
 end

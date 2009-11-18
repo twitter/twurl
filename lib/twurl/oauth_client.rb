@@ -111,7 +111,7 @@ module Twurl
           consumer_secret,
           :site => Twurl.options.base_url
         )
-        consumer.http.set_debug_output(STDERR) if Twurl.options.trace
+        consumer.http.set_debug_output(Twurl.options.debug_output_io) if Twurl.options.trace
         if Twurl.options.ssl?
           consumer.http.use_ssl     = true
           consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
