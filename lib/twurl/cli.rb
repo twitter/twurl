@@ -240,7 +240,7 @@ module Twurl
     end
 
     def debug_output_io
-      super || STRDERR
+      super || STDERR
     end
 
     def request_method
