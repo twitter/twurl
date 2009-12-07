@@ -62,6 +62,7 @@ module Twurl
     [:get, :post, :put, :delete, :options, :head, :copy].each do |request_method|
       class_eval(<<-EVAL, __FILE__, __LINE__)
         def #{request_method}(url, options = {})
+          configure_http!
           access_token.#{request_method}(url, options)
         end
       EVAL
@@ -103,6 +104,14 @@ module Twurl
       end
     end
 
+    def configure_http!
+      consumer.http.set_debug_output(Twurl.options.debug_output_io) if Twurl.options.trace
+      if Twurl.options.ssl?
+        consumer.http.use_ssl     = true
+        consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
+    end
+
     def consumer
       @consumer ||=
       begin
@@ -111,11 +120,6 @@ module Twurl
           consumer_secret,
           :site => Twurl.options.base_url
         )
-        consumer.http.set_debug_output(Twurl.options.debug_output_io) if Twurl.options.trace
-        if Twurl.options.ssl?
-          consumer.http.use_ssl     = true
-          consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-        end
         consumer
       end
     end
