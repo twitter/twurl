@@ -57,12 +57,13 @@ module Twurl
       @consumer_secret = options['consumer_secret']
       @token           = options['token']
       @secret          = options['secret']
+      configure_http!
     end
 
     [:get, :post, :put, :delete, :options, :head, :copy].each do |request_method|
       class_eval(<<-EVAL, __FILE__, __LINE__)
         def #{request_method}(url, options = {})
-          configure_http!
+          # configure_http!
           access_token.#{request_method}(url, options)
         end
       EVAL

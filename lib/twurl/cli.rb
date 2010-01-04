@@ -83,6 +83,18 @@ module Twurl
         output.puts(*args, &block)
       end
 
+      def prompt_for(label)
+        system "stty -echo"
+        print "#{label}: "
+        result = STDIN.gets.chomp
+        CLI.puts
+        result
+      rescue Interrupt
+        exit
+      ensure
+        system "stty echo"
+      end
+
       private
         def extract_command!(arguments)
           if SUPPORTED_COMMANDS.include?(arguments.first)
@@ -125,13 +137,13 @@ module Twurl
 
       def consumer_key
         on('-c', '--consumer-key [key]', "Your consumer key (required)") do |key|
-          options.consumer_key = key ? key : prompt_for('Consumer key')
+          options.consumer_key = key ? key : CLI.prompt_for('Consumer key')
         end
       end
 
       def consumer_secret
         on('-s', '--consumer-secret [secret]', "Your consumer secret (required)") do |secret|
-          options.consumer_secret = secret ? secret : prompt_for('Consumer secret')
+          options.consumer_secret = secret ? secret : CLI.prompt_for('Consumer secret')
         end
       end
 
@@ -155,7 +167,7 @@ module Twurl
 
       def password
         on('-p', '--password [password]', 'Password of account to authorize (required)') do |password|
-          options.password = password ? password : prompt_for('Password')
+          options.password = password ? password : CLI.prompt_for('Password')
         end
       end
 
@@ -203,18 +215,6 @@ module Twurl
           CLI.puts self
           exit
         end
-      end
-
-      def prompt_for(label)
-        system "stty -echo"
-        print "#{label}: "
-        result = STDIN.gets.chomp
-        CLI.puts
-        result
-      rescue Interrupt
-        exit
-      ensure
-        system "stty echo"
       end
     end
   end

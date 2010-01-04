@@ -46,6 +46,22 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
   end
   include RequestMethodParsingTests
 
+  module OAuthClientOptionParsingTests
+    def test_extracting_the_consumer_key
+      mock(Twurl::CLI).prompt_for('Consumer key').never
+
+      options = Twurl::CLI.parse_options(['-c', 'the-key'])
+      assert_equal 'the-key', options.consumer_key
+    end
+
+    def test_consumer_key_option_with_no_value_prompts_user_for_value
+      mock(Twurl::CLI).prompt_for('Consumer key').times(1) { 'inputted-key'}
+      options = Twurl::CLI.parse_options(['-c'])
+      assert_equal 'inputted-key', options.consumer_key
+    end
+  end
+  include OAuthClientOptionParsingTests
+
   module DataParsingTests
     def test_extracting_a_single_key_value_pair
       options = Twurl::CLI.parse_options(['-d', 'key=value'])

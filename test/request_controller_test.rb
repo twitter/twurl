@@ -48,4 +48,11 @@ class Twurl::RequestController::RequestTest < Twurl::RequestController::Abstract
 
     assert_equal expected_body, Twurl::CLI.output.string.chomp
   end
+
+  def test_invalid_or_unspecified_urls_report_error
+    mock(Twurl::CLI).puts(Twurl::RequestController::NO_URI_MESSAGE).times(1)
+    mock(client).perform_request_from_options(options).times(1) { raise URI::InvalidURIError }
+
+    controller.perform_request
+  end
 end
