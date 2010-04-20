@@ -35,8 +35,8 @@ namespace :dist do
     s.version           = Gem::Version.new(Twurl::Version)
     s.summary           = "Curl for the Twitter API"
     s.description       = s.summary
-    s.email             = 'marcel@twitter.com'
-    s.author            = 'Marcel Molina'
+    s.email             = ['marcel@twitter.com', 'raffi@twitter.com']
+    s.authors           = ['Marcel Molina', 'Raffi Krikorian']
     s.has_rdoc          = true
     s.extra_rdoc_files  = %w(README COPYING INSTALL)
     s.homepage          = 'http://twurl.rubyforge.org'
@@ -46,7 +46,7 @@ namespace :dist do
     s.test_files        = Dir['test/**/*']
 
     s.add_dependency 'oauth'
-    s.rdoc_options  = ['--title', "twurl -- Curl for the Twitter API",
+    s.rdoc_options  = ['--title', "twurl -- OAuth-enabled curl for the Twitter API",
                        '--main',  'README',
                        '--line-numbers', '--inline-source']
   end
@@ -62,35 +62,6 @@ namespace :dist do
 
   task :spec do
     puts spec.to_ruby
-  end
-
-  package_name = lambda {|specification| File.join('pkg', "#{specification.name}-#{specification.version}")}
-
-  desc 'Push a release to rubyforge'
-  task :release => [:confirm_release, :clean, :add_release_marker_to_changelog, :package, :commit_changelog, :tag] do
-    require 'rubyforge'
-    package = package_name[spec]
-
-    rubyforge = RubyForge.new.configure
-    rubyforge.login
-
-    user_config = rubyforge.userconfig
-    user_config['release_changes'] = YAML.load_file('CHANGELOG')[spec.version.to_s].join("\n")
-
-    version_already_released = lambda do
-      releases = rubyforge.autoconfig['release_ids']
-      releases.has_key?(spec.name) && releases[spec.name][spec.version.to_s]
-    end
-
-    abort("Release #{spec.version} already exists!") if version_already_released.call
-
-    begin
-      rubyforge.add_release(spec.rubyforge_project, spec.name, spec.version.to_s, "#{package}.tar.gz", "#{package}.gem")
-      puts "Version #{spec.version} released!"
-    rescue Exception => exception
-      puts 'Release failed!'
-      raise
-    end
   end
 
   desc "Unpack current version of library into the twitter.com vendor directory"
