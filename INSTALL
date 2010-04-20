@@ -1,0 +1,12 @@
++---------------------+
+| Install from source |
++---------------------+
+
+  rake dist:gem
+  sudo gem i pkg/twurl*gem
+
++--------------+
+| Dependencies |
++--------------+
+
+  sudo gem i oauth
