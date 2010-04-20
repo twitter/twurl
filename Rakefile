@@ -39,7 +39,7 @@ namespace :dist do
     s.authors           = ['Marcel Molina', 'Raffi Krikorian']
     s.has_rdoc          = true
     s.extra_rdoc_files  = %w(README COPYING INSTALL)
-    s.homepage          = 'http://twurl.rubyforge.org'
+    s.homepage          = 'http://github.com/marcel/twurl'
     s.rubyforge_project = 'twurl'
     s.files             = FileList['Rakefile', 'lib/**/*.rb', 'bin/*']
     s.executables       << 'twurl'
