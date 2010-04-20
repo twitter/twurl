@@ -74,13 +74,39 @@ module Twurl
     end
 
     def exchange_credentials_for_access_token
-      response = consumer.token_request(:post, consumer.access_token_path, nil, {}, client_auth_parameters)
+      response = begin
+        consumer.token_request(:post, consumer.access_token_path, nil, {}, client_auth_parameters)
+      rescue OAuth::Unauthorized
+        perform_pin_authorize_workflow
+      end
       @token   = response[:oauth_token]
       @secret  = response[:oauth_token_secret]
     end
 
     def client_auth_parameters
       {:x_auth_username => username, :x_auth_password => password, :x_auth_mode => 'client_auth'}
+    end
+
+    def perform_pin_authorize_workflow
+      @request_token = consumer.get_request_token
+      CLI.puts("Go to #{generate_authorize_url} and paste in the supplied PIN")
+      pin = gets
+      access_token = @request_token.get_access_token(:oauth_verifier => pin.chomp)
+      {:oauth_token => access_token.token, :oauth_token_secret => access_token.secret}
+    end
+
+    def generate_authorize_url
+      request = consumer.create_signed_request(:get, consumer.authorize_path, @request_token, pin_auth_parameters)
+      params = request['Authorization'].sub(/^OAuth\s+/, '').split(/,\s+/).map { |p|
+        k, v = p.split('=')
+        v =~ /"(.*?)"/
+        "#{k}=#{CGI::escape($1)}"
+      }.join('&')
+      "#{Twurl.options.base_url}#{request.path}?#{params}"
+    end
+
+    def pin_auth_parameters
+      {:oauth_callback => 'oob'}
     end
 
     def authorized?
@@ -116,12 +142,11 @@ module Twurl
     def consumer
       @consumer ||=
       begin
-        consumer = OAuth::Consumer.new(
+        OAuth::Consumer.new(
           consumer_key,
           consumer_secret,
           :site => Twurl.options.base_url
         )
-        consumer
       end
     end
 
