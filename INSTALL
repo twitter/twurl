@@ -1,3 +1,9 @@
++-----------------------+
+| Install with RubyGems |
++-----------------------+
+
+  sudo gem i twurl --source http://rubygems.org
+
 +---------------------+
 | Install from source |
 +---------------------+
