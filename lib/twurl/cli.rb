@@ -3,7 +3,7 @@ module Twurl
     SUPPORTED_COMMANDS     = %w(authorize accounts alias set)
     DEFAULT_COMMAND        = 'request'
     PATH_PATTERN           = /^\/\w+/
-    TUTORIAL               = File.dirname(__FILE__) + '/../../TUTORIAL'
+    README                 = File.dirname(__FILE__) + '/../../README'
     @output              ||= STDOUT
 
     class << self
@@ -130,7 +130,7 @@ module Twurl
 
       def tutorial
         on('-T', '--tutorial', "Narrative overview of how to get started using Twurl") do
-          CLI.puts IO.read(TUTORIAL)
+          CLI.puts IO.read(README)
           exit
         end
       end
