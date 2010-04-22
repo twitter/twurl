@@ -11,8 +11,10 @@ module Twurl
       def load_from_options(options)
         if rcfile.has_oauth_profile_for_username_with_consumer_key?(options.username, options.consumer_key)
           load_client_for_username_and_consumer_key(options.username, options.consumer_key)
+        elsif options.username || (options.command == 'authorize')
+          load_new_client_from_options(options)
         else
-          options.username ? load_new_client_from_options(options) : load_default_client
+          load_default_client
         end
       end
 
@@ -109,8 +111,12 @@ module Twurl
       {:oauth_callback => 'oob'}
     end
 
+    def fetch_verify_credentials
+      access_token.get('/1/account/verify_credentials.json')
+    end
+
     def authorized?
-      oauth_response = access_token.get('/1/account/verify_credentials.json')
+      oauth_response = fetch_verify_credentials
       oauth_response.class == Net::HTTPOK
     end
 
@@ -119,7 +125,16 @@ module Twurl
     end
 
     def save
+      verify_has_username
       self.class.rcfile << self
+    end
+
+    def verify_has_username
+      if username.nil? || username == ''
+        oauth_response = fetch_verify_credentials
+        oauth_response.body =~ /"screen_name"\s*:\s*"(.*?)"/
+        @username = $1
+      end
     end
 
     def to_hash
@@ -141,13 +156,11 @@ module Twurl
 
     def consumer
       @consumer ||=
-      begin
         OAuth::Consumer.new(
           consumer_key,
           consumer_secret,
           :site => Twurl.options.base_url
         )
-      end
     end
 
     def access_token
