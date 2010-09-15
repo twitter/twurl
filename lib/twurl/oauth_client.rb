@@ -159,7 +159,8 @@ module Twurl
         OAuth::Consumer.new(
           consumer_key,
           consumer_secret,
-          :site => Twurl.options.base_url
+          :site => Twurl.options.base_url,
+          :proxy => ENV['http_proxy']
         )
     end
 
