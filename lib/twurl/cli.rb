@@ -79,13 +79,17 @@ module Twurl
         Twurl.options
       end
 
+      def print(*args, &block)
+        output.print(*args, &block)
+      end
+
       def puts(*args, &block)
         output.puts(*args, &block)
       end
 
       def prompt_for(label)
         system "stty -echo"
-        print "#{label}: "
+        CLI.print "#{label}: "
         result = STDIN.gets.chomp
         CLI.puts
         result
