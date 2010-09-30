@@ -1,0 +1,17 @@
+PATH
+  remote: .
+  specs:
+    twurl (0.6.1)
+      oauth (~> 0.4.3)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    oauth (0.4.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  oauth (~> 0.4.3)
+  twurl!
