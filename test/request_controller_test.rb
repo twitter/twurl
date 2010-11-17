@@ -46,7 +46,7 @@ class Twurl::RequestController::RequestTest < Twurl::RequestController::Abstract
 
     controller.perform_request
 
-    assert_equal expected_body, Twurl::CLI.output.string.chomp
+    assert_equal expected_body, Twurl::CLI.output.string
   end
 
   def test_invalid_or_unspecified_urls_report_error

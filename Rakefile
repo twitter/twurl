@@ -30,26 +30,7 @@ namespace :test do
 end
 
 namespace :dist do
-  spec = Gem::Specification.new do |s|
-    s.name              = 'twurl'
-    s.version           = Gem::Version.new(Twurl::Version)
-    s.summary           = "Curl for the Twitter API"
-    s.description       = s.summary
-    s.email             = ['marcel@twitter.com', 'raffi@twitter.com']
-    s.authors           = ['Marcel Molina', 'Raffi Krikorian']
-    s.has_rdoc          = true
-    s.extra_rdoc_files  = %w(README COPYING INSTALL)
-    s.homepage          = 'http://github.com/marcel/twurl'
-    s.rubyforge_project = 'twurl'
-    s.files             = FileList['Rakefile', 'lib/**/*.rb', 'bin/*']
-    s.executables       << 'twurl'
-    s.test_files        = Dir['test/**/*']
-
-    s.add_dependency 'oauth'
-    s.rdoc_options  = ['--title', "twurl -- OAuth-enabled curl for the Twitter API",
-                       '--main',  'README',
-                       '--line-numbers', '--inline-source']
-  end
+  spec = Gem::Specification.load('twurl.gemspec')
 
   Rake::GemPackageTask.new(spec) do |pkg|
     pkg.need_tar_gz = true
