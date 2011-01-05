@@ -71,6 +71,7 @@ module Twurl
             disable_ssl
             request_method
             help
+            version
           end
         end
 
@@ -226,6 +227,13 @@ module Twurl
       def help
         on_tail("-h", "--help", "Show this message") do
           CLI.puts self
+          exit
+        end
+      end
+
+      def version
+        on_tail("-v", "--version", "Show version") do
+          CLI.puts Version
           exit
         end
       end
