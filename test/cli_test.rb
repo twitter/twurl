@@ -94,6 +94,22 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
   end
   include DataParsingTests
 
+  module HeaderParsingTests
+    def test_extracting_a_single_header
+      options = Twurl::CLI.parse_options(['-A', 'Key: Value'])
+      assert_equal({'Key' => 'Value'}, options.headers)
+
+      options = Twurl::CLI.parse_options(['--header', 'Key: Value'])
+      assert_equal({'Key' => 'Value'}, options.headers)
+    end
+
+    def test_multiple_headers_when_option_is_specified_multiple_times_on_command_line_collects_all
+      options = Twurl::CLI.parse_options(['-A', 'Key: Value', '-A', 'Another: Pair'])
+      assert_equal({'Key' => 'Value', 'Another' => 'Pair'}, options.headers)
+    end
+  end
+  include HeaderParsingTests
+
   module SSLDisablingTests
     def test_ssl_is_on_by_default
       options = Twurl::CLI.parse_options([])

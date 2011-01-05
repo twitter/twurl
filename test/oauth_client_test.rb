@@ -11,6 +11,7 @@ class Twurl::OAuthClient::AbstractOAuthClientTest < Test::Unit::TestCase
     options.request_method  = 'get'
     options.path            = '/path/does/not/matter.xml'
     options.data            = {}
+    options.headers         = {}
 
     Twurl.options           = options
   end

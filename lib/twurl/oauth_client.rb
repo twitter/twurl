@@ -64,15 +64,19 @@ module Twurl
 
     [:get, :post, :put, :delete, :options, :head, :copy].each do |request_method|
       class_eval(<<-EVAL, __FILE__, __LINE__)
-        def #{request_method}(url, options = {})
+        def #{request_method}(url, *options)
           # configure_http!
-          access_token.#{request_method}(url, options)
+          access_token.#{request_method}(url, *options)
         end
       EVAL
     end
 
     def perform_request_from_options(options)
-      send(options.request_method, options.path, options.data)
+      if [:post, :put].include?(options.request_method.to_sym)
+        send(options.request_method, options.path, options.data, options.headers)
+      else
+        send(options.request_method, options.path, options.headers)
+      end
     end
 
     def exchange_credentials_for_access_token

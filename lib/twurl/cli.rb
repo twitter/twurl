@@ -39,6 +39,7 @@ module Twurl
         Twurl.options         = Options.new
         Twurl.options.trace   = false
         Twurl.options.data    = {}
+        Twurl.options.headers = {}
 
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
@@ -64,6 +65,7 @@ module Twurl
           o.section "Common options:" do
             trace
             data
+            headers
             host
             quiet
             disable_ssl
@@ -187,6 +189,13 @@ module Twurl
             key, value = pair.split('=')
             options.data[key] = value
           end
+        end
+      end
+
+      def headers
+        on('-A', '--header [header]', 'Adds the specified header to the request to the HTTP server.') do |header|
+          key, value = header.split(': ')
+          options.headers[key] = value
         end
       end
 
