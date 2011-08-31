@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::RCFile::PathConstructionTest < Test::Unit::TestCase
+class Twurl::RCFile::PathConstructionTest < MiniTest::Unit::TestCase
   def test_file_path_appends_file_to_directory
     assert_equal File.join(Twurl::RCFile.directory, Twurl::RCFile::FILE), Twurl::RCFile.file_path
   end
 end
 
-class Twurl::RCFile::LoadingTest < Test::Unit::TestCase
+class Twurl::RCFile::LoadingTest < MiniTest::Unit::TestCase
   def test_load_parses_and_loads_file_if_it_exists
     mock(YAML).load_file(Twurl::RCFile.file_path).times(1)
     mock(Twurl::RCFile).default_rcfile_structure.never
@@ -22,7 +22,7 @@ class Twurl::RCFile::LoadingTest < Test::Unit::TestCase
   end
 end
 
-class Twurl::RCFile::InitializationTest < Test::Unit::TestCase
+class Twurl::RCFile::InitializationTest < MiniTest::Unit::TestCase
   def test_initializing_when_the_file_does_not_exist_loads_default_rcfile_structure
     mock(YAML).load_file(Twurl::RCFile.file_path) { raise Errno::ENOENT }.times(1)
 
@@ -40,7 +40,7 @@ class Twurl::RCFile::InitializationTest < Test::Unit::TestCase
   end
 end
 
-class Twurl::RCFile::DefaultProfileFromDefaultRCFileTest < Test::Unit::TestCase
+class Twurl::RCFile::DefaultProfileFromDefaultRCFileTest < MiniTest::Unit::TestCase
   attr_reader :rcfile
   def setup
     mock(YAML).load_file(Twurl::RCFile.file_path) { raise Errno::ENOENT }.times(1)
@@ -66,7 +66,7 @@ class Twurl::RCFile::DefaultProfileFromDefaultRCFileTest < Test::Unit::TestCase
   end
 end
 
-class Twurl::RCFile::UpdatingTest < Test::Unit::TestCase
+class Twurl::RCFile::UpdatingTest < MiniTest::Unit::TestCase
   attr_reader :rcfile
   def setup
     mock(YAML).load_file(Twurl::RCFile.file_path) { raise Errno::ENOENT }.times(1)
@@ -108,7 +108,7 @@ class Twurl::RCFile::UpdatingTest < Test::Unit::TestCase
   end
 end
 
-class Twurl::RCFile::SavingTest < Test::Unit::TestCase
+class Twurl::RCFile::SavingTest < MiniTest::Unit::TestCase
   attr_reader :rcfile
   def setup
     delete_rcfile

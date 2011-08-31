@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::AuthorizationController::DispatchTest < Test::Unit::TestCase
+class Twurl::AuthorizationController::DispatchTest < MiniTest::Unit::TestCase
   attr_reader :options, :client, :controller
   def setup
     @options    = Twurl::Options.new

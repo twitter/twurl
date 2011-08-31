@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::ConfigurationController::DispatchTest < Test::Unit::TestCase
+class Twurl::ConfigurationController::DispatchTest < MiniTest::Unit::TestCase
   def test_error_message_is_displayed_if_setting_is_unrecognized
     options = Twurl::Options.test_exemplar
     client  = Twurl::OAuthClient.test_exemplar
@@ -15,7 +15,7 @@ class Twurl::ConfigurationController::DispatchTest < Test::Unit::TestCase
   end
 end
 
-class Twurl::ConfigurationController::DispatchDefaultSettingTest < Test::Unit::TestCase
+class Twurl::ConfigurationController::DispatchDefaultSettingTest < MiniTest::Unit::TestCase
   def test_setting_default_profile_just_by_username
     options = Twurl::Options.test_exemplar
     client  = Twurl::OAuthClient.test_exemplar

@@ -2,10 +2,10 @@ $:.unshift File.dirname(__FILE__) + '/../lib'
 require 'simplecov'
 SimpleCov.start
 require 'twurl'
-require 'test/unit'
+require 'minitest/autorun'
 require 'rr'
 
-class Test::Unit::TestCase
+class MiniTest::Unit::TestCase
   include RR::Adapters::TestUnit
 end
 
