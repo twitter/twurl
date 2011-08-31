@@ -91,6 +91,14 @@ class Twurl::CLI::OptionParsingTest < MiniTest::Unit::TestCase
       options = Twurl::CLI.parse_options(['-d', 'key=value&another=pair'])
       assert_equal({'key' => 'value', 'another' => 'pair'}, options.data)
     end
+
+    def test_extracting_an_empty_key_value_pair
+      options = Twurl::CLI.parse_options(['-d', 'key='])
+      assert_equal({'key' => ''}, options.data)
+
+      options = Twurl::CLI.parse_options(['--data', 'key='])
+      assert_equal({'key' => ''}, options.data)
+    end
   end
   include DataParsingTests
 
