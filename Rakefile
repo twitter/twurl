@@ -1,8 +1,7 @@
 require 'rubygems'
 require 'rake'
 require 'rake/testtask'
-require 'rake/gempackagetask'
-
+require 'rubygems/package_task'
 require File.dirname(__FILE__) + '/lib/twurl'
 
 library_root = File.dirname(__FILE__)
@@ -32,7 +31,7 @@ end
 namespace :dist do
   spec = Gem::Specification.load('twurl.gemspec')
 
-  Rake::GemPackageTask.new(spec) do |pkg|
+  Gem::PackageTask.new(spec) do |pkg|
     pkg.need_tar_gz = true
     pkg.package_files.include('{lib,bin,test}/**/*')
     pkg.package_files.include('README')
