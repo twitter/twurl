@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rr', '~> 1.0'
   s.add_development_dependency 'simplecov', '~> 0.4'
   s.add_development_dependency 'minitest', '~> 2.5'
-  s.authors = ["Marcel Molina", "Raffi Krikorian"]
+  s.authors = ["Marcel Molina", "Erik Michaels-Ober"]
   s.description = %q{Curl for the Twitter API}
-  s.email = ['marcel@twitter.com', 'raffi@twitter.com']
+  s.email = ['marcel@twitter.com']
   s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.extra_rdoc_files = %w(CHANGELOG COPYING INSTALL README)
   s.files = `git ls-files`.split("\n")
