@@ -187,7 +187,7 @@ module Twurl
       def data
         on('-d', '--data [data]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
           data.split('&').each do |pair|
-            key, value = pair.split('=')
+            key, value = pair.split('=', 2)
             options.data[key] = value
           end
         end
