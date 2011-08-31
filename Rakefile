@@ -1,10 +1,6 @@
-require 'rubygems'
-require 'rake'
+#!/usr/bin/env rake
 require 'rake/testtask'
 require 'rubygems/package_task'
-require File.dirname(__FILE__) + '/lib/twurl'
-
-library_root = File.dirname(__FILE__)
 
 task :default => :test
 
