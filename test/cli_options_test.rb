@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::Options::Test < Test::Unit::TestCase
+class Twurl::Options::Test < MiniTest::Unit::TestCase
   attr_reader :options
   def setup
     @options = Twurl::Options.new

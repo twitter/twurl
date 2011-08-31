@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
+class Twurl::CLI::OptionParsingTest < MiniTest::Unit::TestCase
   module CommandParsingTests
     def test_no_command_specified_falls_to_default_command
       options = Twurl::CLI.parse_options(['/1/url/does/not/matter.xml'])
@@ -133,7 +133,7 @@ class Twurl::CLI::OptionParsingTest < Test::Unit::TestCase
 
     def test_setting_host_updates_to_requested_value
       custom_host = 'localhost:3000'
-      assert_not_equal Twurl::Options::DEFAULT_HOST, custom_host
+      assert Twurl::Options::DEFAULT_HOST != custom_host
 
       [['-H', custom_host], ['--host', custom_host]].each do |option_combination|
         options = Twurl::CLI.parse_options(option_combination)

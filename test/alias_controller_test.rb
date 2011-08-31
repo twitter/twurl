@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::AliasesController::DispatchTest < Test::Unit::TestCase
+class Twurl::AliasesController::DispatchTest < MiniTest::Unit::TestCase
   attr_reader :options, :client
   def setup
     @options = Twurl::Options.test_exemplar

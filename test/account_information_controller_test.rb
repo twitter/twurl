@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::AccountInformationController::DispatchWithNoAuthorizedAccountsTest < Test::Unit::TestCase
+class Twurl::AccountInformationController::DispatchWithNoAuthorizedAccountsTest < MiniTest::Unit::TestCase
   attr_reader :options, :client, :controller
   def setup
     @options    = Twurl::Options.new
@@ -16,7 +16,7 @@ class Twurl::AccountInformationController::DispatchWithNoAuthorizedAccountsTest 
   end
 end
 
-class Twurl::AccountInformationController::DispatchWithOneAuthorizedAccountTest < Test::Unit::TestCase
+class Twurl::AccountInformationController::DispatchWithOneAuthorizedAccountTest < MiniTest::Unit::TestCase
   attr_reader :options, :client, :controller
   def setup
     @options    = Twurl::Options.test_exemplar
@@ -34,7 +34,7 @@ class Twurl::AccountInformationController::DispatchWithOneAuthorizedAccountTest 
   end
 end
 
-class Twurl::AccountInformationController::DispatchWithOneUsernameThatHasAuthorizedMultipleAccountsTest < Test::Unit::TestCase
+class Twurl::AccountInformationController::DispatchWithOneUsernameThatHasAuthorizedMultipleAccountsTest < MiniTest::Unit::TestCase
   attr_reader :default_client_options, :default_client, :other_client_options, :other_client, :controller
   def setup
     @default_client_options = Twurl::Options.test_exemplar
