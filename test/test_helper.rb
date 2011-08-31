@@ -1,4 +1,6 @@
 $:.unshift File.dirname(__FILE__) + '/../lib'
+require 'simplecov'
+SimpleCov.start
 require 'twurl'
 require 'test/unit'
 require 'rr'

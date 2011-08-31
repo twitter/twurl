@@ -5,6 +5,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'oauth', '~> 0.4'
   s.add_development_dependency 'rake', '~> 0.8'
   s.add_development_dependency 'rr', '~> 1.0'
+  s.add_development_dependency 'simplecov', '~> 0.4'
   s.add_development_dependency 'test-unit', '~> 2.1'
   s.authors = ["Marcel Molina", "Raffi Krikorian"]
   s.description = %q{Curl for the Twitter API}
