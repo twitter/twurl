@@ -82,6 +82,14 @@ module Twurl
         Twurl.options
       end
 
+      def output
+        if Twurl.options && Twurl.options.output
+          Twurl.options.output
+        else
+          @output
+        end
+      end
+
       def print(*args, &block)
         output.print(*args, &block)
       end
