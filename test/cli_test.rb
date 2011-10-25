@@ -150,4 +150,21 @@ class Twurl::CLI::OptionParsingTest < MiniTest::Unit::TestCase
     end
   end
   include HostOptionTests
+
+  module ProxyOptionTests
+    def test_not_specifying_proxy_sets_it_to_nil
+      options = Twurl::CLI.parse_options([])
+      assert_equal nil, options.proxy
+    end
+
+    def test_setting_proxy_updates_to_requested_value
+      custom_proxy = 'localhost:80'
+
+      [['-P', custom_proxy], ['--proxy', custom_proxy]].each do |option_combination|
+        options = Twurl::CLI.parse_options(option_combination)
+        assert_equal custom_proxy, options.proxy
+      end
+    end
+  end
+  include ProxyOptionTests
 end
