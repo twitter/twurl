@@ -2,7 +2,7 @@ module Twurl
   module VERSION
     MAJOR  = '0' unless defined? MAJOR
     MINOR  = '6' unless defined? MINOR
-    TINY   = '5' unless defined? TINY
+    TINY   = '6' unless defined? TINY
     BETA   = nil unless defined? BETA # Time.now.to_i.to_s
   end
 
