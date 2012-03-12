@@ -1,7 +1,7 @@
 module Twurl
   class RCFile
     FILE = '.twurlrc'
-    @directory ||= ENV['HOME']
+    @directory ||= File.expand_path('~')
     class << self
       attr_accessor :directory
 
