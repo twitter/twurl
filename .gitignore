@@ -5,7 +5,6 @@
 *.tmproject
 *.un~
 *~
-.DS_Store
 .Spotlight-V100
 .Trashes
 ._*
@@ -22,7 +21,6 @@ Gemfile.lock
 Icon?
 InstalledFiles
 Session.vim
-Thumbs.db
 \#*\#
 _yardoc
 auto-save-list
