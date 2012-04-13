@@ -70,6 +70,7 @@ module Twurl
             quiet
             disable_ssl
             request_method
+            rcfile
             help
             version
           end
@@ -229,6 +230,12 @@ module Twurl
       def request_method
         on('-X', '--request-method [method]', 'Request method (default: GET)') do |request_method|
           options.request_method = request_method.downcase
+        end
+      end
+
+      def rcfile
+        on('-R', '--rcfile [path]', 'Path to RC file (default: ~/.twurlrc)') do |rcfile|
+          options.rcfile = rcfile
         end
       end
 

@@ -150,4 +150,17 @@ class Twurl::CLI::OptionParsingTest < MiniTest::Unit::TestCase
     end
   end
   include HostOptionTests
+
+  module RCFileTests
+    def test_setting_rcfile_uses_custom_rcfile
+      custom_rcfile = '/tmp/rcfile'
+      assert Twurl::RCFile.file_path != custom_rcfile
+
+      [['-R', custom_rcfile], ['--rcfile', custom_rcfile]].each do |option_combination|
+        options = Twurl::CLI.parse_options(option_combination)
+        assert_equal custom_rcfile, options.rcfile
+      end
+    end
+  end
+  include RCFileTests
 end
