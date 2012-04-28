@@ -128,6 +128,12 @@ class Twurl::RCFile::SavingTest < MiniTest::Unit::TestCase
     assert rcfile_exists?
   end
 
+  def test_file_is_not_world_readable
+    client = Twurl::OAuthClient.test_exemplar
+    rcfile << client
+    assert_equal 33152, File.stat(Twurl::RCFile.file_path).mode
+  end
+
   private
     def rcfile_exists?
       File.exists?(Twurl::RCFile.file_path)
