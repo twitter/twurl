@@ -135,7 +135,9 @@ end
 class Twurl::OAuthClient::PerformingRequestsFromOptionsTest < Twurl::OAuthClient::AbstractOAuthClientTest
   def test_request_is_made_using_request_method_and_path_and_data_in_options
     client = Twurl::OAuthClient.test_exemplar
-    mock(client).get(options.path, options.data)
+    mock(client.consumer.http).request(satisfy { |req|
+                                         req.is_a?(Net::HTTP::Get) && (req.path == options.path)
+                                       })
 
     client.perform_request_from_options(options)
   end

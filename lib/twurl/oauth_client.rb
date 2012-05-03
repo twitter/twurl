@@ -62,21 +62,22 @@ module Twurl
       configure_http!
     end
 
-    [:get, :post, :put, :delete, :options, :head, :copy].each do |request_method|
-      class_eval(<<-EVAL, __FILE__, __LINE__)
-        def #{request_method}(url, *options)
-          # configure_http!
-          access_token.#{request_method}(url, *options)
-        end
-      EVAL
-    end
+    METHODS = {
+        :post => Net::HTTP::Post,
+        :get => Net::HTTP::Get,
+        :put => Net::HTTP::Put,
+        :delete => Net::HTTP::Delete,
+        :options => Net::HTTP::Options,
+        :head => Net::HTTP::Head,
+        :copy => Net::HTTP::Copy
+      }
 
-    def perform_request_from_options(options)
-      if [:post, :put].include?(options.request_method.to_sym)
-        send(options.request_method, options.path, options.data, options.headers)
-      else
-        send(options.request_method, options.path, options.headers)
-      end
+    def perform_request_from_options(options, &block)
+      request_class = METHODS.fetch(options.request_method.to_sym)
+      request = request_class.new(options.path, options.headers)
+      request.set_form_data(options.data) if options.data
+      request.oauth!(consumer.http, consumer, access_token)
+      consumer.http.request(request, &block)
     end
 
     def exchange_credentials_for_access_token
