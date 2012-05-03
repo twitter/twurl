@@ -10,8 +10,9 @@ module Twurl
     end
 
     def perform_request
-      response = client.perform_request_from_options(options)
-      CLI.print response.body
+      client.perform_request_from_options(options) { |response|
+        response.read_body { |chunk| CLI.print chunk }
+      }
     rescue URI::InvalidURIError
       CLI.puts NO_URI_MESSAGE
     end

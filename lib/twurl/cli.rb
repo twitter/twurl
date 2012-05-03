@@ -92,10 +92,12 @@ module Twurl
 
       def print(*args, &block)
         output.print(*args, &block)
+        output.flush if output.respond_to?(:flush)
       end
 
       def puts(*args, &block)
         output.puts(*args, &block)
+        output.flush if output.respond_to?(:flush)
       end
 
       def prompt_for(label)

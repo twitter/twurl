@@ -41,8 +41,8 @@ class Twurl::RequestController::RequestTest < Twurl::RequestController::Abstract
   def test_request_response_is_written_to_output
     expected_body = 'this is a fake response body'
     response      = Object.new
-    mock(response).body.times(1) { expected_body }
-    mock(client).perform_request_from_options(options).times(1) { response }
+    mock(response).read_body { |block| block.call expected_body }
+    mock(client).perform_request_from_options(options).times(1) { |options, block| block.call(response) }
 
     controller.perform_request
 
