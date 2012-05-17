@@ -72,6 +72,7 @@ module Twurl
             request_method
             help
             version
+            proxy
           end
         end
 
@@ -247,6 +248,12 @@ module Twurl
           exit
         end
       end
+
+      def proxy
+        on('-P', '--proxy [proxy]', 'Specify HTTP proxy to forward requests to (default: No proxy)') do |proxy|
+          options.proxy = proxy
+        end
+      end
     end
   end
 
@@ -284,6 +291,10 @@ module Twurl
 
     def host
       super || DEFAULT_HOST
+    end
+
+    def proxy
+      super || nil
     end
   end
 end
