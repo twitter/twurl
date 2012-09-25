@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = %q{Curl for the Twitter API}
   s.email = ['marcel@twitter.com']
   s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.extra_rdoc_files = %w(CHANGELOG COPYING INSTALL README)
+  s.extra_rdoc_files = %w(COPYING INSTALL README)
   s.files = `git ls-files`.split("\n")
   s.homepage = 'http://github.com/marcel/twurl'
   s.name = 'twurl'

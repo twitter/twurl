@@ -1,4 +1,0 @@
-Version: 0.6.3
---------------
-
-* Add the -A/--header command line option to support adding a header to the request. (Jake Donham)
