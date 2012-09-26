@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/test_helper'
 class Twurl::CLI::OptionParsingTest < MiniTest::Unit::TestCase
   module CommandParsingTests
     def test_no_command_specified_falls_to_default_command
-      options = Twurl::CLI.parse_options(['/1/url/does/not/matter.xml'])
+      options = Twurl::CLI.parse_options(['/1.1/url/does/not/matter.json'])
       assert_equal Twurl::CLI::DEFAULT_COMMAND, options.command
     end
 
@@ -23,14 +23,14 @@ class Twurl::CLI::OptionParsingTest < MiniTest::Unit::TestCase
 
   module RequestMethodParsingTests
     def test_request_method_is_default_if_unspecified
-      options = Twurl::CLI.parse_options(['/1/url/does/not/matter.xml'])
+      options = Twurl::CLI.parse_options(['/1.1/url/does/not/matter.json'])
       assert_equal Twurl::Options::DEFAULT_REQUEST_METHOD, options.request_method
     end
 
     def test_specifying_a_request_method_extracts_and_normalizes_request_method
       variations = [%w[-X put], %w[-X PUT], %w[--request-method PUT], %w[--request-method put]]
       variations.each do |option_variation|
-        path = '/1/url/does/not/matter.xml'
+        path = '/1.1/url/does/not/matter.json'
         order_variant_1 = [option_variation, path].flatten
         order_variant_2 = [path, option_variation].flatten
         [order_variant_1, order_variant_2].each do |args|

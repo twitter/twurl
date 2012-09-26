@@ -25,8 +25,8 @@ class Twurl::AliasesController::DispatchTest < MiniTest::Unit::TestCase
   def test_when_no_subcommands_are_provided_and_aliases_exist_they_are_displayed
     assert options.subcommands.empty?
 
-    Twurl::OAuthClient.rcfile.alias('h', '/1/statuses/home_timeline.xml')
-    mock(Twurl::CLI).puts("h: /1/statuses/home_timeline.xml").times(1)
+    Twurl::OAuthClient.rcfile.alias('h', '/1.1/statuses/home_timeline.json')
+    mock(Twurl::CLI).puts("h: /1.1/statuses/home_timeline.json").times(1)
 
     controller = Twurl::AliasesController.new(client, options)
     controller.dispatch
@@ -34,8 +34,8 @@ class Twurl::AliasesController::DispatchTest < MiniTest::Unit::TestCase
 
   def test_when_alias_and_value_are_provided_they_are_added
     options.subcommands = ['h']
-    options.path        = '/1/statuses/home_timeline.xml'
-    mock(Twurl::OAuthClient.rcfile).alias('h', '/1/statuses/home_timeline.xml').times(1)
+    options.path        = '/1.1/statuses/home_timeline.json'
+    mock(Twurl::OAuthClient.rcfile).alias('h', '/1.1/statuses/home_timeline.json').times(1)
 
     controller = Twurl::AliasesController.new(client, options)
     controller.dispatch

@@ -51,7 +51,7 @@ module Twurl
 
     OAUTH_CLIENT_OPTIONS = %w[username consumer_key consumer_secret token secret]
     attr_reader *OAUTH_CLIENT_OPTIONS
-    attr_reader :password
+    attr_reader :username, :password
     def initialize(options = {})
       @username        = options['username']
       @password        = options['password']
@@ -117,7 +117,7 @@ module Twurl
     end
 
     def fetch_verify_credentials
-      access_token.get('/1/account/verify_credentials.json')
+      access_token.get('/1.1/account/verify_credentials.json?include_entities=false&skip_status=true')
     end
 
     def authorized?
