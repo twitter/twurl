@@ -91,7 +91,7 @@ module Twurl
     end
 
     def client_auth_parameters
-      {:x_auth_username => username, :x_auth_password => password, :x_auth_mode => 'client_auth'}
+      {'x_auth_username' => username, 'x_auth_password' => password, 'x_auth_mode' => 'client_auth'}
     end
 
     def perform_pin_authorize_workflow
@@ -113,7 +113,7 @@ module Twurl
     end
 
     def pin_auth_parameters
-      {:oauth_callback => 'oob'}
+      {'oauth_callback' => 'oob'}
     end
 
     def fetch_verify_credentials
