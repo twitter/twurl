@@ -3,10 +3,6 @@ require File.expand_path('../lib/twurl/version', __FILE__)
 
 Gem::Specification.new do |spec|
   spec.add_dependency 'oauth', '~> 0.4'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rr'
-  spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'minitest'
   spec.authors = ["Marcel Molina", "Erik Michaels-Ober"]
   spec.description = %q{Curl for the Twitter API}
   spec.email = ['marcel@twitter.com']
