@@ -6,7 +6,7 @@ gem 'rake'
 group :test do
   gem 'minitest'
   gem 'rr'
-  gem 'simplecov'
+  gem 'simplecov', :require => false
 end
 
 gemspec
