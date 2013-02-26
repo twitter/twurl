@@ -1,9 +1,12 @@
-unless ENV['CI']
-  require 'simplecov'
-  SimpleCov.start do
-    add_filter 'test'
-  end
-end
+require 'simplecov'
+require 'coveralls'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
+SimpleCov.start
+
 require 'twurl'
 require 'minitest/autorun'
 require 'rr'
