@@ -44,10 +44,12 @@ module Twurl
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
 
-          o.banner = "Usage: twurl authorize -u username -p password --consumer-key HQsAGcVm5MQT3n6j7qVJw --consumer-secret asdfasd223sd2\n" +
-                     "       twurl [options] /statuses/home_timeline.xml\n"                                                                  +
-                     "\n"                                                                                                                    +
-                     "Supported Commands:\n#{SUPPORTED_COMMANDS.sort.join(', ')}"
+          o.banner = <<-BANNER
+Usage: twurl authorize --consumer-key key --consumer-secret secret
+       twurl [options] /1.1/statuses/home_timeline.json
+
+Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
+          BANNER
 
           o.section "Getting started:" do
             tutorial

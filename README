@@ -24,8 +24,8 @@ When you have your consumer key and its secret you authorize
 your Twitter account to make API requests with your consumer key
 and secret.
 
-  % twurl authorize --consumer-key the_key       \
-                    --consumer-secret the_secret
+  % twurl authorize --consumer-key key       \
+                    --consumer-secret secret
 
 This will return an URL that you should open up in your browser.
 Authenticate to Twitter, and then enter the returned PIN back into
@@ -35,9 +35,9 @@ to make requests with the API. Twurl will tell you as much.
 If your consumer application has xAuth enabled, then you can use
 a variant of the above
 
-  % twurl authorize -u username -p password      \
-                    --consumer-key the_key       \
-                    --consumer-secret the_secret
+  % twurl authorize -u username -p password  \
+                    --consumer-key key       \
+                    --consumer-secret secret
 
 And, again assuming your username, password, key and secret is
 correct, will authorize you in one step.
@@ -49,25 +49,25 @@ correct, will authorize you in one step.
 The simplest request just requires that you specify the path you
 want to request.
 
-  % twurl /1/statuses/home_timeline.xml
+  % twurl /1.1/statuses/home_timeline.json
 
 Similar to curl, a GET request is performed by default.
 
 You can implicitly perform a POST request by passing the -d option,
 which specifies POST parameters.
 
-  % twurl -d 'status=Testing twurl' /1/statuses/update.xml
+  % twurl -d 'status=Testing twurl' /1.1/statuses/update.json
 
 You can explicitly specify what request method to perform with
 the -X (or --request-method) option.
 
-  % twurl -X DELETE /1/statuses/destroy/123456.xml
+  % twurl -X POST /1.1/statuses/destroy/1234567890.json
 
 +------------------+
 | Creating aliases |
 +------------------+
 
-  % twurl alias h /1/statuses/home_timeline.xml
+  % twurl alias h /1.1/statuses/home_timeline.json
 
 You can then use "h" in place of the full path.
 
@@ -77,7 +77,7 @@ Paths that require additional options such as request parameters for example can
 be used with aliases the same as with full explicit paths, just as you might
 expect.
 
-  % twurl alias tweet /1/statuses/update.xml
+  % twurl alias tweet /1.1/statuses/update.json
   % twurl tweet -d "status=Aliases in twurl are convenient"
 
 +-------------------------------+

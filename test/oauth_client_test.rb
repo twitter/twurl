@@ -9,7 +9,7 @@ class Twurl::OAuthClient::AbstractOAuthClientTest < MiniTest::Unit::TestCase
     @client                 = Twurl::OAuthClient.test_exemplar
     options.base_url        = 'api.twitter.com'
     options.request_method  = 'get'
-    options.path            = '/path/does/not/matter.xml'
+    options.path            = '/path/does/not/matter.json'
     options.data            = {}
     options.headers         = {}
 
