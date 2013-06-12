@@ -11,10 +11,6 @@ require 'twurl'
 require 'minitest/autorun'
 require 'rr'
 
-class MiniTest::Unit::TestCase
-  include RR::Adapters::TestUnit
-end
-
 Twurl::RCFile.directory = ENV['TMPDIR']
 
 module Twurl
