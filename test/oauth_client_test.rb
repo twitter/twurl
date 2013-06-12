@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::OAuthClient::AbstractOAuthClientTest < MiniTest::Unit::TestCase
+class Twurl::OAuthClient::AbstractOAuthClientTest < Minitest::Test
   attr_reader :client, :options
   def setup
     Twurl::OAuthClient.instance_variable_set(:@rcfile, nil)

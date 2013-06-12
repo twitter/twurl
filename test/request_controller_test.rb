@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::RequestController::AbstractTestCase < MiniTest::Unit::TestCase
+class Twurl::RequestController::AbstractTestCase < Minitest::Test
   attr_reader :options, :client, :controller
   def setup
     Twurl::CLI.output = StringIO.new

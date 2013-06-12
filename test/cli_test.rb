@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class Twurl::CLI::OptionParsingTest < MiniTest::Unit::TestCase
+class Twurl::CLI::OptionParsingTest < Minitest::Test
   module CommandParsingTests
     def test_no_command_specified_falls_to_default_command
       options = Twurl::CLI.parse_options(['/1.1/url/does/not/matter.json'])

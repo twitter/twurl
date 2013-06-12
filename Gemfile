@@ -5,7 +5,7 @@ gem 'rake'
 
 group :test do
   gem 'coveralls', :require => false
-  gem 'minitest'
+  gem 'minitest', '>= 5'
   gem 'rr', '>= 1.1'
   gem 'simplecov', :require => false
 end
