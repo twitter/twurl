@@ -6,12 +6,18 @@ module Twurl
     PROTOCOL_PATTERN       = /^\w+:\/\//
     README                 = File.dirname(__FILE__) + '/../../README'
     @output              ||= STDOUT
+    class NoPathFound < Exception
+    end
 
     class << self
       attr_accessor :output
 
       def run(args)
-        options = parse_options(args)
+        begin
+          options = parse_options(args)
+        rescue NoPathFound => e
+          exit
+        end
         dispatch(options)
       end
 
@@ -85,7 +91,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
         if Twurl.options.command == DEFAULT_COMMAND and Twurl.options.path.nil?
           CLI.puts option_parser
-          exit
+          raise NoPathFound, "No path found"
         end
 
         Twurl.options.subcommands = arguments
