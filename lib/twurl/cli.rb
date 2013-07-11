@@ -3,14 +3,21 @@ module Twurl
     SUPPORTED_COMMANDS     = %w(authorize accounts alias set)
     DEFAULT_COMMAND        = 'request'
     PATH_PATTERN           = /^\/\w+/
+    PROTOCOL_PATTERN       = /^\w+:\/\//
     README                 = File.dirname(__FILE__) + '/../../README'
     @output              ||= STDOUT
+    class NoPathFound < Exception
+    end
 
     class << self
       attr_accessor :output
 
       def run(args)
-        options = parse_options(args)
+        begin
+          options = parse_options(args)
+        rescue NoPathFound => e
+          exit
+        end
         dispatch(options)
       end
 
@@ -81,6 +88,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         arguments                 = option_parser.parse!(args)
         Twurl.options.command     = extract_command!(arguments)
         Twurl.options.path        = extract_path!(arguments)
+
+        if Twurl.options.command == DEFAULT_COMMAND and Twurl.options.path.nil?
+          CLI.puts option_parser
+          raise NoPathFound, "No path found"
+        end
+
         Twurl.options.subcommands = arguments
         Twurl.options
       end
@@ -128,11 +141,23 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           path = nil
           arguments.each_with_index do |argument, index|
             if argument[PATH_PATTERN]
-              path = arguments.slice!(index)
+              path_with_params = arguments.slice!(index)
+              path, params = path_with_params.split("?", 2)
+              if params
+                path += "?" + escape_params(params)
+              end
               break
             end
           end
           path
+        end
+
+        def escape_params(params)
+          split_params = params.split("&").map do |param|
+            key, value = param.split('=', 2)
+            CGI::escape(key) + '=' + CGI::escape(value)
+          end
+          split_params.join("&")
         end
     end
 
@@ -215,7 +240,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
       def host
         on('-H', '--host [host]', 'Specify host to make requests to (default: api.twitter.com)') do |host|
-          options.host = host
+          if host[PROTOCOL_PATTERN]
+            protocol, protocolless_host = host.split(PROTOCOL_PATTERN, 2)
+            options.host = protocolless_host
+          else
+            options.host = host
+          end
         end
       end
 
