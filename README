@@ -42,6 +42,13 @@ a variant of the above
 And, again assuming your username, password, key and secret is
 correct, will authorize you in one step.
 
+If you use many consumer applications then you can name them when
+authorizing to keep track of which is which.
+
+  % twurl authorize --consumer-key key       \
+                    --consumer-secret secret \
+                    --consumer-name name
+
 +-----------------+
 | Making Requests |
 +-----------------+
