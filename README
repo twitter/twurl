@@ -29,7 +29,7 @@ and secret.
 
 This will return an URL that you should open up in your browser.
 Authenticate to Twitter, and then enter the returned PIN back into
-the terminal.  Assuming all that works well, you will beauthorized
+the terminal.  Assuming all that works well, you will be authorized
 to make requests with the API. Twurl will tell you as much.
 
 If your consumer application has xAuth enabled, then you can use
