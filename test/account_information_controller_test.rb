@@ -59,3 +59,25 @@ class Twurl::AccountInformationController::DispatchWithOneUsernameThatHasAuthori
     controller.dispatch
   end
 end
+
+
+class Twurl::AccountInformationController::DisplayNamesForConsumerApplications < MiniTest::Unit::TestCase
+  attr_reader :options, :client, :controller
+  def setup
+    Twurl::OAuthClient.rcfile(true)
+    @options               = Twurl::Options.test_exemplar
+    @options.consumer_name = "exemplar_application"
+    @client                = Twurl::OAuthClient.load_new_client_from_options(options)
+    mock(Twurl::OAuthClient.rcfile).save.times(1)
+    Twurl::OAuthClient.rcfile << client
+
+    @controller = Twurl::AccountInformationController.new(client, options)
+  end
+
+  def test_consumer_name_is_displayed_for_account_if_present
+    mock(Twurl::CLI).puts(client.username).times(1).ordered
+    mock(Twurl::CLI).puts("  #{client.consumer_key} - #{client.consumer_name} (default)").times(1).ordered
+
+    controller.dispatch
+  end
+end

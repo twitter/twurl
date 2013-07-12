@@ -10,8 +10,9 @@ module Twurl
         profiles = rcfile.profiles
         profiles.keys.sort.each do |account_name|
           CLI.puts account_name
-          profiles[account_name].each do |consumer_key, _|
+          profiles[account_name].each do |consumer_key, properties|
             account_summary = "  #{consumer_key}"
+            account_summary << " - #{properties['consumer_name']}" if properties['consumer_name']
             account_summary << " (default)" if rcfile.default_profile == [account_name, consumer_key]
             CLI.puts account_summary
           end
