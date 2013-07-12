@@ -67,6 +67,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             password
             consumer_key
             consumer_secret
+            consumer_name
             access_token
             token_secret
           end
@@ -189,6 +190,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def consumer_secret
         on('-s', '--consumer-secret [secret]', "Your consumer secret (required)") do |secret|
           options.consumer_secret = secret ? secret : CLI.prompt_for('Consumer secret')
+        end
+      end
+
+      def consumer_name
+        on('-n', '--consumer-name [name]', "Name to identify consumer") do |name|
+          options.consumer_name = name
         end
       end
 

@@ -49,7 +49,7 @@ module Twurl
       end
     end
 
-    OAUTH_CLIENT_OPTIONS = %w[username consumer_key consumer_secret token secret]
+    OAUTH_CLIENT_OPTIONS = %w[username consumer_key consumer_secret consumer_name token secret]
     attr_reader *OAUTH_CLIENT_OPTIONS
     attr_reader :username, :password
     def initialize(options = {})
@@ -57,6 +57,7 @@ module Twurl
       @password        = options['password']
       @consumer_key    = options['consumer_key']
       @consumer_secret = options['consumer_secret']
+      @consumer_name   = options['consumer_name']
       @token           = options['token']
       @secret          = options['secret']
       configure_http!
