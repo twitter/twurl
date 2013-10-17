@@ -91,7 +91,7 @@ module Twurl
 
         options.upload['file'].each {|filename|
           multipart_body << "--#{boundary}\r\n"
-          multipart_body << "Content-Disposition: form-data; name=\"#{options.upload['filefield']}[]\"; filename=\"#{File.basename(filename)}\"\r\n"
+          multipart_body << "Content-Disposition: form-data; name=\"#{options.upload['filefield']}\"; filename=\"#{File.basename(filename)}\"\r\n"
           multipart_body << "Content-Type: application/octet-stream\r\n"
           multipart_body << "Content-Transfer-Encoding: base64\r\n" if options.upload['base64']
           multipart_body << "\r\n"

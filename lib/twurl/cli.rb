@@ -306,7 +306,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def filefield 
         on('-F', '--file-field [field_name]', 'Specify the file field for the upload to be included within (default: media)') do |filefield|
           options.upload['filefield'] = filefield
-          options.upload['filefield'] = 'media' if options.upload['filefield'].empty? 
+          options.upload['filefield'] = 'media[]' if options.upload['filefield'].empty? 
         end
       end
       
