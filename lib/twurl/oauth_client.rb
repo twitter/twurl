@@ -63,14 +63,13 @@ module Twurl
     end
 
     METHODS = {
-      :post => Net::HTTP::Post,
-      :postmulti => Net::HTTP::Post,
-      :get => Net::HTTP::Get,
-      :put => Net::HTTP::Put,
-      :delete => Net::HTTP::Delete,
-      :options => Net::HTTP::Options,
-      :head => Net::HTTP::Head,
-      :copy => Net::HTTP::Copy
+        :post => Net::HTTP::Post,
+        :get => Net::HTTP::Get,
+        :put => Net::HTTP::Put,
+        :delete => Net::HTTP::Delete,
+        :options => Net::HTTP::Options,
+        :head => Net::HTTP::Head,
+        :copy => Net::HTTP::Copy
     }
 
     def perform_request_from_options(options, &block)
