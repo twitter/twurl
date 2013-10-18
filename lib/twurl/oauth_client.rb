@@ -70,7 +70,7 @@ module Twurl
         :options => Net::HTTP::Options,
         :head => Net::HTTP::Head,
         :copy => Net::HTTP::Copy
-    }
+      }
 
     def perform_request_from_options(options, &block)
       request_class = METHODS.fetch(options.request_method.to_sym)
