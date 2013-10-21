@@ -47,6 +47,8 @@ module Twurl
         Twurl.options.trace   = false
         Twurl.options.data    = {}
         Twurl.options.headers = {}
+        Twurl.options.upload  = {}
+        Twurl.options.upload['file'] = []
 
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
@@ -82,6 +84,9 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             help
             version
             proxy
+            file
+            filefield
+            base64
           end
         end
 
@@ -286,9 +291,34 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           options.proxy = proxy
         end
       end
+
+      def file
+        on('-f', '--file [path_to_file]', 'Specify the path to the file to upload') do |file|
+          if File.file?(file)
+            options.upload['file'] << file
+          else 
+            CLI.puts "ERROR: File not found"
+            exit
+          end
+        end
+      end
+      
+      def filefield 
+        on('-F', '--file-field [field_name]', 'Specify the file field for the upload to be included within (default: media)') do |filefield|
+          options.upload['filefield'] = filefield
+          options.upload['filefield'] = 'media[]' if options.upload['filefield'].empty? 
+        end
+      end
+      
+      def base64 
+        on('-b', '--base64', 'Encode the uploaded file as base64 (default: false)') do |base64|
+          options.upload['base64'] = base64
+        end
+      end
     end
   end
 
+    
   class Options < OpenStruct
     DEFAULT_REQUEST_METHOD = 'get'
     DEFAULT_HOST           = 'api.twitter.com'

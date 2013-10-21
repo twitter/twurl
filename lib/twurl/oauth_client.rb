@@ -75,7 +75,42 @@ module Twurl
     def perform_request_from_options(options, &block)
       request_class = METHODS.fetch(options.request_method.to_sym)
       request = request_class.new(options.path, options.headers)
-      request.set_form_data(options.data) if options.data
+
+      if options.upload && options.upload['file'].count > 0
+        boundary = "00Twurl" + rand(1000000000000000000).to_s + "lruwT99"
+        multipart_body = []
+
+        options.data.each {|key, value|
+          multipart_body << "--#{boundary}\r\n"
+          multipart_body << "Content-Disposition: form-data; name=\"#{key}\"\r\n"
+          multipart_body << "\r\n"
+          multipart_body << value
+          multipart_body << "\r\n"
+        }
+
+        options.upload['file'].each {|filename|
+          multipart_body << "--#{boundary}\r\n"
+          multipart_body << "Content-Disposition: form-data; name=\"#{options.upload['filefield']}\"; filename=\"#{File.basename(filename)}\"\r\n"
+          multipart_body << "Content-Type: application/octet-stream\r\n"
+          multipart_body << "Content-Transfer-Encoding: base64\r\n" if options.upload['base64']
+          multipart_body << "\r\n"
+
+          if options.upload['base64']
+            enc = Base64.encode64(File.read(filename))
+            multipart_body << enc
+          else 
+            multipart_body << File.read(filename)
+          end
+        }
+
+        multipart_body << "\r\n--#{boundary}--\r\n"
+        
+        request.body = multipart_body.join
+        request['Content-Type'] = "multipart/form-data, boundary=\"#{boundary}\""
+      elsif options.data
+        request.set_form_data(options.data)
+      end
+
       request.oauth!(consumer.http, consumer, access_token)
       consumer.http.request(request, &block)
     end
