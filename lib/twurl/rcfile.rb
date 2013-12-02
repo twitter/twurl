@@ -35,7 +35,7 @@ module Twurl
     end
 
     def save
-      File.open(self.class.file_path, File::RDWR|File::CREAT, 0600) do |rcfile|
+      File.open(self.class.file_path, File::RDWR|File::CREAT|File::TRUNC, 0600) do |rcfile|
         rcfile.write data.to_yaml
       end
     end
