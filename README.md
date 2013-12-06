@@ -1,6 +1,5 @@
-+-------+
-| Twurl |
-+-------+
+Twurl 
+=====
 
 Twurl is like curl, but tailored specifically for the Twitter API.
 It knows how to grant an access token to a client application for
@@ -11,21 +10,20 @@ as defining aliases for common requests, as well as support for
 multiple access tokens to easily switch between different client
 applications and Twitter accounts.
 
-+-----------------+
-| Getting Started |
-+-----------------+
+Getting Started
+===============
 
-The first thing you have to do is register an OAuth application
-to get a consumer key and secret.
-
-  http://dev.twitter.com/apps/new
+The first thing you have to do is [register](http://dev.twitter.com/apps/new)
+an OAuth application to get a consumer key and secret.
 
 When you have your consumer key and its secret you authorize
 your Twitter account to make API requests with your consumer key
 and secret.
 
+```
   % twurl authorize --consumer-key key       \
                     --consumer-secret secret
+```
 
 This will return an URL that you should open up in your browser.
 Authenticate to Twitter, and then enter the returned PIN back into
@@ -35,66 +33,80 @@ to make requests with the API. Twurl will tell you as much.
 If your consumer application has xAuth enabled, then you can use
 a variant of the above
 
+```
   % twurl authorize -u username -p password  \
                     --consumer-key key       \
                     --consumer-secret secret
+```
 
 And, again assuming your username, password, key and secret is
 correct, will authorize you in one step.
 
-+-----------------+
-| Making Requests |
-+-----------------+
+Making Requests
+===============
 
 The simplest request just requires that you specify the path you
 want to request.
 
+```
   % twurl /1.1/statuses/home_timeline.json
+```
 
 Similar to curl, a GET request is performed by default.
 
 You can implicitly perform a POST request by passing the -d option,
 which specifies POST parameters.
 
+```
   % twurl -d 'status=Testing twurl' /1.1/statuses/update.json
+```
 
 You can explicitly specify what request method to perform with
 the -X (or --request-method) option.
 
+```
   % twurl -X POST /1.1/statuses/destroy/1234567890.json
+```
 
-+------------------+
-| Creating aliases |
-+------------------+
+Creating Aliases
+================
 
+```
   % twurl alias h /1.1/statuses/home_timeline.json
+```
 
 You can then use "h" in place of the full path.
 
+```
   % twurl h
+```
 
 Paths that require additional options such as request parameters for example can
 be used with aliases the same as with full explicit paths, just as you might
 expect.
 
+```
   % twurl alias tweet /1.1/statuses/update.json
   % twurl tweet -d "status=Aliases in twurl are convenient"
+```
 
-+-------------------------------+
-| Changing your default profile |
-+-------------------------------+
+Changing your Default Profile
+=============================
 
 The first time you authorize a client application to make requests on behalf of your account, twurl stores your access token information in its .twurlrc file. Subsequent requests will use this profile as the default profile. You can use the 'accounts' subcommand to see what client applications have been authorized for what user names:
 
+```
   % twurl accounts
   noradio
     HQsAGcBm5MQT4n6j7qVJw
     hhC7Koy2zRsTZvQh1hVlSA (default)
   testiverse
     guT9RsJbNQgVe6AwoY9BA
+```
 
 Notice that one of those consumer keys is marked as the default. To change the default use the 'set' subcommand, passing then either just the username, if it's unambiguous, or the username and consumer key pair if it isn't unambiguous:
 
+```
   % twurl set default testiverse
   % twurl accounts
   noradio
@@ -102,7 +114,9 @@ Notice that one of those consumer keys is marked as the default. To change the d
     hhC7Koy2zRsTZvQh1hVlSA
   testiverse
     guT9RsJbNQgVe6AwoY9BA (default)
+```
 
+```
   % twurl set default noradio HQsAGcBm5MQT4n6j7qVJw
   % twurl accounts
   noradio
@@ -110,10 +124,10 @@ Notice that one of those consumer keys is marked as the default. To change the d
     hhC7Koy2zRsTZvQh1hVlSA
   testiverse
     guT9RsJbNQgVe6AwoY9BA
+```
 
-+--------------+
-| Contributors |
-+--------------+
+Contributors
+============
 
-Marcel Molina <marcel@twitter.com> / @noradio
-Erik Michaels-Ober / @sferik
+* Marcel Molina <marcel@twitter.com> / [@noradio](https://twitter.com/noradio)
+* Erik Michaels-Ober / [@sferik](https://twitter.com/sferik)
