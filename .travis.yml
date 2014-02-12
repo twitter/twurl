@@ -6,11 +6,10 @@ rvm:
   - 1.9.3
   - 2.0.0
   - jruby-head
-  - rbx
+  - rbx-2
   - ruby-head
 matrix:
   allow_failures:
     - rvm: jruby-head
-    - rvm: rbx
     - rvm: ruby-head
   fast_finish: true

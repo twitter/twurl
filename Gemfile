@@ -11,10 +11,4 @@ group :test do
   gem 'simplecov', :require => false
 end
 
-platforms :rbx do
-  gem 'rubinius-coverage', '~> 2.0'
-  gem 'rubysl-base64', '~> 2.0'
-  gem 'rubysl-net-http', '~> 2.0'
-end
-
 gemspec
