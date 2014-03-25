@@ -304,7 +304,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       end
       
       def filefield 
-        on('-F', '--file-field [field_name]', 'Specify the file field for the upload to be included within (default: media)') do |filefield|
+        on('-F', '--file-field [field_name]', 'Specify the POST parameter name for the file upload data (default: media)') do |filefield|
           options.upload['filefield'] = filefield
         end
       end
