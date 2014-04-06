@@ -79,6 +79,7 @@ module Twurl
       if options.upload && options.upload['file'].count > 0
         boundary = "00Twurl" + rand(1000000000000000000).to_s + "lruwT99"
         multipart_body = []
+        file_field = options.upload['filefield'] ? options.upload['filefield'] : 'media[]'
 
         options.data.each {|key, value|
           multipart_body << "--#{boundary}\r\n"
@@ -90,7 +91,7 @@ module Twurl
 
         options.upload['file'].each {|filename|
           multipart_body << "--#{boundary}\r\n"
-          multipart_body << "Content-Disposition: form-data; name=\"#{options.upload['filefield']}\"; filename=\"#{File.basename(filename)}\"\r\n"
+          multipart_body << "Content-Disposition: form-data; name=\"#{file_field}\"; filename=\"#{File.basename(filename)}\"\r\n"
           multipart_body << "Content-Type: application/octet-stream\r\n"
           multipart_body << "Content-Transfer-Encoding: base64\r\n" if options.upload['base64']
           multipart_body << "\r\n"
