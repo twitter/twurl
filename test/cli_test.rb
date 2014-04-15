@@ -118,6 +118,51 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
   end
   include DataParsingTests
 
+  module RawDataParsingTests
+    def test_extracting_a_single_key_value_pair
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value'])
+      assert_equal({'key' => 'value'}, options.data)
+
+      options = Twurl::CLI.parse_options([TEST_PATH, '--raw-data', 'key=value'])
+      assert_equal({'key' => 'value'}, options.data)
+    end
+
+    def test_with_special_to_url_characters_in_value
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=a+%26%26+b+%2B%2B+c'])
+      assert_equal({'key' => 'a && b ++ c'}, options.data)
+    end
+
+    def test_passing_data_and_no_explicit_request_method_defaults_request_method_to_post
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value'])
+      assert_equal 'post', options.request_method
+    end
+
+    def test_passing_data_and_an_explicit_request_method_uses_the_specified_method
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value', '-X', 'DELETE'])
+      assert_equal({'key' => 'value'}, options.data)
+      assert_equal 'delete', options.request_method
+    end
+
+    def test_multiple_pairs_when_option_is_specified_multiple_times_on_command_line_collects_all
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value', '-d', 'another=pair'])
+      assert_equal({'key' => 'value', 'another' => 'pair'}, options.data)
+    end
+
+    def test_multiple_pairs_separated_by_ampersand_are_all_captured
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value+%26+value&another=pair'])
+      assert_equal({'key' => 'value & value', 'another' => 'pair'}, options.data)
+    end
+
+    def test_extracting_an_empty_key_value_pair
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key='])
+      assert_equal({'key' => ''}, options.data)
+
+      options = Twurl::CLI.parse_options([TEST_PATH, '--raw-data', 'key='])
+      assert_equal({'key' => ''}, options.data)
+    end
+  end
+  include RawDataParsingTests
+
   module HeaderParsingTests
     def test_extracting_a_single_header
       options = Twurl::CLI.parse_options([TEST_PATH, '-A', 'Key: Value'])
