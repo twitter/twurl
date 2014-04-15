@@ -76,6 +76,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           o.section "Common options:" do
             trace
             data
+            raw_data
             headers
             host
             quiet
@@ -232,6 +233,14 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           data.split('&').each do |pair|
             key, value = pair.split('=', 2)
             options.data[key] = value
+          end
+        end
+      end
+
+      def raw_data
+        on('-r', '--raw-data [data]', 'Sends the specified data as it is in a POST request to the HTTP server.') do |data|
+          CGI::parse(data).each_pair do |key, value|
+            options.data[key] = value.first
           end
         end
       end
