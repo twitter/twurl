@@ -240,7 +240,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def raw_data
         on('-r', '--raw-data [data]', 'Sends the specified data as it is in a POST request to the HTTP server.') do |data|
           CGI::parse(data).each_pair do |key, value|
-            options.data[key] = value
+            options.data[key] = value.first
           end
         end
       end
