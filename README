@@ -18,7 +18,7 @@ applications and Twitter accounts.
 The first thing you have to do is register an OAuth application
 to get a consumer key and secret.
 
-  http://dev.twitter.com/apps/new
+  https://apps.twitter.com/app/new
 
 When you have your consumer key and its secret you authorize
 your Twitter account to make API requests with your consumer key
