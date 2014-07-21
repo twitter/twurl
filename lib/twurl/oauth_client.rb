@@ -99,13 +99,13 @@ module Twurl
           if options.upload['base64']
             enc = Base64.encode64(File.read(filename))
             multipart_body << enc
-          else 
+          else
             multipart_body << File.read(filename)
           end
         }
 
         multipart_body << "\r\n--#{boundary}--\r\n"
-        
+
         request.body = multipart_body.join
         request['Content-Type'] = "multipart/form-data, boundary=\"#{boundary}\""
       elsif options.data
