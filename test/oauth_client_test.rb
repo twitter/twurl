@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/test_helper'
 class Twurl::OAuthClient::AbstractOAuthClientTest < Minitest::Test
   attr_reader :client, :options
   def setup
+    Twurl::RCFile.clear
     Twurl::OAuthClient.instance_variable_set(:@rcfile, nil)
 
     @options                = Twurl::Options.test_exemplar
@@ -19,8 +20,7 @@ class Twurl::OAuthClient::AbstractOAuthClientTest < Minitest::Test
   def teardown
     super
     Twurl.options = Twurl::Options.new
-    # Make sure we don't do any disk IO in these tests
-    assert !File.exists?(Twurl::RCFile.file_path)
+    Twurl::RCFile.clear
   end
 
   def test_nothing
@@ -71,6 +71,18 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
     mock(Twurl::OAuthClient).load_client_for_username(options.username).never
     mock(Twurl::OAuthClient).load_new_client_from_options(options).never
     mock(Twurl::OAuthClient).load_default_client.times(1)
+
+    Twurl::OAuthClient.load_from_options(options)
+  end
+
+  def test_if_authorize_app_only_client_is_loaded
+    options = Twurl::Options.test_app_only_exemplar
+    options.command = 'authorize'
+
+    mock(Twurl::OAuthClient).load_client_for_username_and_consumer_key(options.username, options.consumer_key).never
+    mock(Twurl::OAuthClient).load_new_client_from_options(options).never
+    mock(Twurl::OAuthClient).load_default_client.never
+    mock(Twurl::OAuthClient).load_new_client_for_app_only(options).times(1)
 
     Twurl::OAuthClient.load_from_options(options)
   end

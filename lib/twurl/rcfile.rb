@@ -1,6 +1,7 @@
 module Twurl
   class RCFile
     FILE = '.twurlrc'
+    APP_ONLY_PROFILE = 'app-only'
     class << self
       def directory
         @@directory ||= File.expand_path('~')
@@ -80,6 +81,18 @@ module Twurl
 
     def alias_from_name(name)
       aliases[name]
+    end
+
+    def app_only_username
+      APP_ONLY_PROFILE
+    end
+
+    def app_only_profiles
+      profiles[app_only_username] || {}
+    end
+
+    def is_app_only?(username)
+      username == app_only_username
     end
 
     def has_oauth_profile_for_username_with_consumer_key?(username, consumer_key)

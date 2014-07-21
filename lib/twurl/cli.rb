@@ -71,6 +71,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             consumer_secret
             access_token
             token_secret
+            app_only
           end
 
           o.section "Common options:" do
@@ -210,6 +211,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         end
       end
 
+      def app_only
+        on('--app-only', "Use Application-only authentication") do |app_only|
+          options.app_only = true
+        end
+      end
+
       def username
         on('-u', '--username [username]', 'Username of account to authorize (required)') do |username|
           options.username = username
@@ -332,7 +339,11 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
     DEFAULT_PROTOCOL       = 'https'
 
     def oauth_client_options
-      OAuthClient::OAUTH_CLIENT_OPTIONS.inject({}) do |options, option|
+      if app_only
+        AppOnlyOAuthClient::OAUTH_CLIENT_OPTIONS
+      else
+        OAuthClient::OAUTH_CLIENT_OPTIONS
+      end.inject({}) do |options, option|
         options[option] = send(option)
         options
       end

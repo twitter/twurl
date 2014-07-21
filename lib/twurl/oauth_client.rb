@@ -11,6 +11,8 @@ module Twurl
       def load_from_options(options)
         if rcfile.has_oauth_profile_for_username_with_consumer_key?(options.username, options.consumer_key)
           load_client_for_username_and_consumer_key(options.username, options.consumer_key)
+        elsif options.app_only && options.command == 'authorize'
+          load_new_client_for_app_only(options)
         elsif options.username || (options.command == 'authorize')
           load_new_client_from_options(options)
         else
@@ -19,11 +21,15 @@ module Twurl
       end
 
       def load_client_for_username_and_consumer_key(username, consumer_key)
-        user_profiles = rcfile[username]
-        if user_profiles && attributes = user_profiles[consumer_key]
-          new(attributes)
+        if rcfile.is_app_only?(username)
+          load_client_for_app_only(consumer_key)
         else
-          raise Exception, "No profile for #{username}"
+          user_profiles = rcfile[username]
+          if user_profiles && attributes = user_profiles[consumer_key]
+            new(attributes)
+          else
+            raise Exception, "No profile for #{username}"
+          end
         end
       end
 
@@ -37,6 +43,18 @@ module Twurl
         else
           raise Exception, "No profile for #{username}"
         end
+      end
+
+      def load_client_for_app_only(consumer_key)
+        if (app_only_profiles = rcfile.app_only_profiles) && app_only_profiles[consumer_key]
+          AppOnlyOAuthClient.new(app_only_profiles[consumer_key])
+        else
+          raise Exception, "No profile for application-only: #{consumer_key}"
+        end
+      end
+
+      def load_new_client_for_app_only(options = {})
+        AppOnlyOAuthClient.new(options.oauth_client_options.merge('username' => rcfile.app_only_username))
       end
 
       def load_new_client_from_options(options)
@@ -72,7 +90,7 @@ module Twurl
         :copy => Net::HTTP::Copy
       }
 
-    def perform_request_from_options(options, &block)
+    def build_request_from_options(options)
       request_class = METHODS.fetch(options.request_method.to_sym)
       request = request_class.new(options.path, options.headers)
 
@@ -111,7 +129,11 @@ module Twurl
       elsif options.data
         request.set_form_data(options.data)
       end
+      request
+    end
 
+    def perform_request_from_options(options, &block)
+      request = build_request_from_options(options)
       request.oauth!(consumer.http, consumer, access_token)
       consumer.http.request(request, &block)
     end
@@ -200,9 +222,12 @@ module Twurl
         OAuth::Consumer.new(
           consumer_key,
           consumer_secret,
-          :site => Twurl.options.base_url,
-          :proxy => Twurl.options.proxy
+          oauth_consumer_options
         )
+    end
+
+    def oauth_consumer_options
+      { :site => Twurl.options.base_url, :proxy => Twurl.options.proxy }
     end
 
     def access_token
