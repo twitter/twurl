@@ -6,6 +6,7 @@ module Twurl
         raise Exception, "You need to authorize first."
       end
       options.path ||= OAuthClient.rcfile.alias_from_options(options)
+      options.headers["User-Agent"] ||= "twurl #{Version}"
       perform_request
     end
 
