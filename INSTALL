@@ -5,11 +5,16 @@
   sudo gem i twurl --source http://rubygems.org
 
 +---------------------+
+| Build from source   |
++---------------------+
+
+  rake build
+
++---------------------+
 | Install from source |
 +---------------------+
 
-  rake dist:gem
-  sudo gem i pkg/twurl*gem
+  rake install
 
 +--------------+
 | Dependencies |
