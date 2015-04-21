@@ -2,6 +2,10 @@
 | Install with RubyGems |
 +-----------------------+
 
++-----------------------+
+| Install with RubyGems |
++-----------------------+
+
   sudo gem i twurl --source http://rubygems.org
 
 +---------------------+
@@ -20,4 +24,4 @@
 | Dependencies |
 +--------------+
 
-  sudo gem i oauth
+  sudo gem i oauth bundler
