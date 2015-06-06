@@ -107,7 +107,9 @@ module Twurl
         multipart_body << "\r\n--#{boundary}--\r\n"
 
         request.body = multipart_body.join
-        request['Content-Type'] = "multipart/form-data, boundary=\"#{boundary}\""
+        request.content_type = "multipart/form-data, boundary=\"#{boundary}\""
+      elsif request.content_type && options.data
+        request.body = options.data.keys.first
       elsif options.data
         request.set_form_data(options.data)
       end

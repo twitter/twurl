@@ -135,9 +135,37 @@ end
 class Twurl::OAuthClient::PerformingRequestsFromOptionsTest < Twurl::OAuthClient::AbstractOAuthClientTest
   def test_request_is_made_using_request_method_and_path_and_data_in_options
     client = Twurl::OAuthClient.test_exemplar
-    mock(client.consumer.http).request(satisfy { |req|
-                                         req.is_a?(Net::HTTP::Get) && (req.path == options.path)
-                                       })
+
+    mock(client.consumer.http).request(
+      satisfy { |req| req.is_a?(Net::HTTP::Get) && (req.path == options.path) }
+    )
+
+    client.perform_request_from_options(options)
+  end
+
+  def test_content_type_is_not_overridden_if_set_and_data_in_options
+    client = Twurl::OAuthClient.test_exemplar
+
+    options.request_method = 'post'
+    options.data           = { '{ "foo": "bar" }' => nil }
+    options.headers        = { 'Content-Type' => 'application/json' }
+
+    mock(client.consumer.http).request(
+      satisfy { |req| req.is_a?(Net::HTTP::Post) && req.content_type == 'application/json' }
+    )
+
+    client.perform_request_from_options(options)
+  end
+
+  def test_content_type_is_set_to_form_encoded_if_not_set_and_data_in_options
+    client = Twurl::OAuthClient.test_exemplar
+
+    options.request_method = 'post'
+    options.data           = { '{ "foo": "bar" }' => nil }
+
+    mock(client.consumer.http).request(
+      satisfy { |req| req.is_a?(Net::HTTP::Post) && req.content_type == 'application/x-www-form-urlencoded' }
+    )
 
     client.perform_request_from_options(options)
   end
