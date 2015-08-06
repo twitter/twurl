@@ -11,6 +11,14 @@ as defining aliases for common requests, as well as support for
 multiple access tokens to easily switch between different client
 applications and Twitter accounts.
 
++------------------+
+| Installing Twurl |
++------------------+
+
+Twurl can be installed using ruby gems:
+
+  % gem install twurl
+
 +-----------------+
 | Getting Started |
 +-----------------+
