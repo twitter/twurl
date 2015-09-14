@@ -1,0 +1,25 @@
+#!/bin/bash -xv
+
+## tMovie - Video Tweet
+## 0.1 basic support
+
+## Usage: tMovie <filename> <"tweet text"> 
+
+FILENAME=$1
+TWEETTEXT=$2
+FILESIZE=$(stat -c%s "$FILENAME")
+
+echo "Size of $FILENAME = $FILESIZE bytes."
+echo "Text for tweet: $TWEETTEXT"
+
+TMEDIAID=$(twurl /1.1/media/upload.json -H upload.twitter.com -d "command=INIT&media_type=video/mp4&total_bytes=$FILESIZE" | jq .media_id_string)
+
+## The problem is a lack of precision in IEEE754 64-bit double-precision floating point numbers, which jq uses.
+temp="${TMEDIAID%\"}"
+MEDIAID="${temp#\"}"
+
+echo "Media ID: $MEDIAID"
+
+twurl /1.1/media/upload.json -H upload.twitter.com -d "command=APPEND&segment_index=0&media_id=$MEDIAID" --file-field media --file "$FILENAME"
+twurl /1.1/media/upload.json -H upload.twitter.com -d "command=FINALIZE&media_id=$MEDIAID"
+twurl /1.1/statuses/update.json -d "status=$TWEETTEXT&media_ids=$MEDIAID"
