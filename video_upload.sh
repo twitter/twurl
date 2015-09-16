@@ -7,7 +7,7 @@ function video-upload() {
     MEDIAID=$(twurl /1.1/media/upload.json -H upload.twitter.com -d "command=INIT&media_type=video/mp4&total_bytes=$FILESIZE" | jq .media_id_string | sed 's/\"//g')
 
     INDEX=0
-    split -b 3m $1 twitter-video-
+    split -b 5m $1 twitter-video-
     for FILE in twitter-video-*; do
       echo "[INFO] Uploading segment $INDEX ($FILE)..."
       twurl "/1.1/media/upload.json" -H upload.twitter.com -d "command=APPEND&segment_index=$INDEX&media_id=$MEDIAID" --file-field "media" --file "$FILE"
