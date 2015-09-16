@@ -1,25 +1,40 @@
-#!/bin/bash -xv
+#!/bin/bash -x
 
 ## tMovie - Video Tweet
 ## 0.1 basic support
-
+## 0.2 split added | @brandonblack 
 ## Usage: tMovie <filename> <"tweet text"> 
 
-FILENAME=$1
-TWEETTEXT=$2
-FILESIZE=$(stat -c%s "$FILENAME")
+## functions
 
-echo "Size of $FILENAME = $FILESIZE bytes."
-echo "Text for tweet: $TWEETTEXT"
+function video-upload() {
 
-TMEDIAID=$(twurl /1.1/media/upload.json -H upload.twitter.com -d "command=INIT&media_type=video/mp4&total_bytes=$FILESIZE" | jq .media_id_string)
+    FILESIZE=$(stat -c%s "$1")
+    printf "[START] Uploading $FILESIZE bytes.\n"
+    MEDIAID=$(twurl /1.1/media/upload.json -H upload.twitter.com -d "command=INIT&media_type=video/mp4&total_bytes=$FILESIZE" | jq .media_id_string | sed 's/\"//g')
 
-## The problem is a lack of precision in IEEE754 64-bit double-precision floating point numbers, which jq uses.
-temp="${TMEDIAID%\"}"
-MEDIAID="${temp#\"}"
+    INDEX=0
+    split -b 5m $1 twitter-video-
+    for FILE in twitter-video-*; do
+      echo "[INFO] Uploading segment $INDEX ($FILE)..."
+      twurl "/1.1/media/upload.json" -H upload.twitter.com -d "command=APPEND&segment_index=$INDEX&media_id=$MEDIAID" --file-field "media" --file "$FILE"
+      INDEX=$((INDEX + 1))
+    done
+    rm twitter-video-*
 
-echo "Media ID: $MEDIAID"
+    twurl "/1.1/media/upload.json" -H upload.twitter.com -d "command=FINALIZE&media_id=$MEDIAID" && printf "\n"
+    printf "[DONE] $MEDIAID"
+}
 
-twurl /1.1/media/upload.json -H upload.twitter.com -d "command=APPEND&segment_index=0&media_id=$MEDIAID" --file-field media --file "$FILENAME"
-twurl /1.1/media/upload.json -H upload.twitter.com -d "command=FINALIZE&media_id=$MEDIAID"
-twurl /1.1/statuses/update.json -d "status=$TWEETTEXT&media_ids=$MEDIAID"
+## main
+
+if [ $# -lt 1 ]; then
+  echo "[ERROR] Missing requried file name."
+  exit
+fi
+  
+video-upload $1
+twurl /1.1/statuses/update.json -d "status=$2&media_ids=$MEDIAID"
+
+## end
+
