@@ -234,4 +234,17 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
     end
   end
   include ProxyOptionTests
+
+  module AppOnlyOptionTests
+    def test_not_specifying_app_only
+      options = Twurl::CLI.parse_options([TEST_PATH])
+      assert_equal nil, options.app_only
+    end
+
+    def test_specifying_app_only_authorize
+      options = Twurl::CLI.parse_options([TEST_PATH, '--app-only'])
+      assert_equal true, options.app_only
+    end
+  end
+  include AppOnlyOptionTests
 end

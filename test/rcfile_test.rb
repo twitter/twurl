@@ -108,6 +108,35 @@ class Twurl::RCFile::UpdatingTest < Minitest::Test
   end
 end
 
+class Twurl::RCFile::AppOnlyProfileTest < Minitest::Test
+  attr_reader :rcfile
+  def setup
+    @rcfile = Twurl::RCFile.new
+  end
+
+  def test_app_only_username
+    assert_equal 'app-only', rcfile.app_only_username
+  end
+
+  def test_app_only_profiles
+    opts = Twurl::Options.test_app_only_exemplar
+    client = Twurl::AppOnlyOAuthClient.test_exemplar
+    rcfile << client
+
+    expected_response = {
+      opts.consumer_key =>
+        { "username"        => opts.username,
+          "consumer_key"    => opts.consumer_key,
+          "consumer_secret" => opts.consumer_secret }}
+
+    assert_equal expected_response, rcfile.app_only_profiles
+  end
+
+  def test_is_app_only?
+    assert rcfile.is_app_only?(Twurl::Options.test_app_only_exemplar.username)
+  end
+end
+
 class Twurl::RCFile::SavingTest < Minitest::Test
   attr_reader :rcfile
   def setup

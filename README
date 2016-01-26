@@ -5,6 +5,9 @@
 Twurl is like curl, but tailored specifically for the Twitter API.
 It knows how to grant an access token to a client application for
 a specified user and then sign all requests with that access token.
+You may also use application-only authentication for endpoints that
+support it.
+More: https://dev.twitter.com/docs/auth/application-only-auth
 
 It also provides other development and debugging conveniences such
 as defining aliases for common requests, as well as support for
@@ -49,6 +52,14 @@ a variant of the above
 
 And, again assuming your username, password, key and secret is
 correct, will authorize you in one step.
+
+If you would like to use application-only authentication to issue
+requests authenticated on behalf of the Application as opposed to
+on behalf of an user.
+
+  % twurl authorize --app-only               \
+                    --consumer-key key       \
+                    --consumer-secret secret
 
 +-----------------+
 | Making Requests |
@@ -100,6 +111,8 @@ The first time you authorize a client application to make requests on behalf of 
     hhC7Koy2zRsTZvQh1hVlSA (default)
   testiverse
     guT9RsJbNQgVe6AwoY9BA
+  app-only
+    cBm5MQT4n6jsJbNQgVwo
 
 Notice that one of those consumer keys is marked as the default. To change the default use the 'set' subcommand, passing then either just the username, if it's unambiguous, or the username and consumer key pair if it isn't unambiguous:
 
@@ -110,6 +123,8 @@ Notice that one of those consumer keys is marked as the default. To change the d
     hhC7Koy2zRsTZvQh1hVlSA
   testiverse
     guT9RsJbNQgVe6AwoY9BA (default)
+  app-only
+    cBm5MQT4n6jsJbNQgVwo
 
   % twurl set default noradio HQsAGcBm5MQT4n6j7qVJw
   % twurl accounts
@@ -118,6 +133,18 @@ Notice that one of those consumer keys is marked as the default. To change the d
     hhC7Koy2zRsTZvQh1hVlSA
   testiverse
     guT9RsJbNQgVe6AwoY9BA
+  app-only
+    cBm5MQT4n6jsJbNQgVwo
+
+  % twurl set default app-only
+  % twurl accounts
+  noradio
+    HQsAGcBm5MQT4n6j7qVJw
+    hhC7Koy2zRsTZvQh1hVlSA
+  testiverse
+    guT9RsJbNQgVe6AwoY9BA
+  app-only
+    cBm5MQT4n6jsJbNQgVwo (default)
 
 +--------------+
 | Contributors |

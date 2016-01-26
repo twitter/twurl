@@ -27,4 +27,19 @@ class Twurl::AuthorizationController::DispatchTest < Minitest::Test
     end
   end
   include ErrorCases
+
+  module AppOnlyAuth
+    def test_successful_app_only_authentication_saves_retrieved_access_token
+      app_only_client     = Twurl::AppOnlyOAuthClient.load_new_client_from_options(options)
+      app_only_controller = Twurl::AuthorizationController.new(app_only_client, options)
+
+      mock(app_only_client).exchange_credentials_for_access_token.times(1)
+      mock(app_only_client).save.times(1)
+      mock(app_only_controller).raise(Twurl::Exception, Twurl::AuthorizationController::AUTHORIZATION_FAILED_MESSAGE).never
+      mock(Twurl::CLI).puts(Twurl::AuthorizationController::AUTHORIZATION_SUCCEEDED_MESSAGE).times(1)
+
+      app_only_controller.dispatch
+    end
+  end
+  include AppOnlyAuth
 end
