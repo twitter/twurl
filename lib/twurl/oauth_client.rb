@@ -10,7 +10,7 @@ module Twurl
 
       def load_from_options(options)
         if rcfile.has_oauth_profile_for_username_with_consumer_key?(options.username, options.consumer_key)
-          load_client_for_username_and_consumer_key(options.username, options.consumer_key)
+          load_client_for_username_and_consumer_key(options.username, options.consumer_key)       
         elsif options.username || (options.command == 'authorize')
           load_new_client_from_options(options)
         else
@@ -57,8 +57,8 @@ module Twurl
       @password        = options['password']
       @consumer_key    = options['consumer_key']
       @consumer_secret = options['consumer_secret']
-      @token           = options['token']
-      @secret          = options['secret']
+      @token    = options['token']
+      @secret    = options['secret']
       configure_http!
     end
 
@@ -117,8 +117,11 @@ module Twurl
       request.oauth!(consumer.http, consumer, access_token)
       consumer.http.request(request, &block)
     end
-
+        
     def exchange_credentials_for_access_token
+      if token and secret
+        return
+      end
       response = begin
         consumer.token_request(:post, consumer.access_token_path, nil, {}, client_auth_parameters)
       rescue OAuth::Unauthorized
@@ -136,7 +139,7 @@ module Twurl
       @request_token = consumer.get_request_token
       CLI.puts("Go to #{generate_authorize_url} and paste in the supplied PIN")
       pin = gets
-      access_token = @request_token.get_access_token(:oauth_verifier => pin.chomp)
+      token = @request_token.get_access_token(:oauth_verifier => pin.chomp)
       {:oauth_token => access_token.token, :oauth_token_secret => access_token.secret}
     end
 

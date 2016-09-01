@@ -200,13 +200,13 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
       def access_token
         on('-a', '--access-token [token]', 'Your access token') do |token|
-          options.access_token = token
+          options.token = token
         end
       end
 
       def token_secret
-        on('-S', '--token-secret', "Your token secret") do |secret|
-          options.token_secret = secret
+        on('-S', '--token-secret [secret]', 'Your token secret') do |secret|
+          options.secret = secret
         end
       end
 
