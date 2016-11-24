@@ -88,6 +88,23 @@ expect.
   % twurl alias tweet /1.1/statuses/update.json
   % twurl tweet -d "status=Aliases in twurl are convenient"
 
+If you want an easy way to tweet from your command line, you could add the next
+lines to your bash profile. In Linux:
+
+  tweet(){twurl -q -d "status=$1" /1/statuses/update.xml}
+
+In Mac OS X:
+  
+  function tweet {
+    twurl -q -d "status=$1" /1/statuses/update.xml
+  }
+
+Then, you should be able to tweet from your command line like this:
+
+  % tweet "This is my new status"
+
+Thanks to @jtallant for this lines.
+
 +-------------------------------+
 | Changing your default profile |
 +-------------------------------+
