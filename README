@@ -40,16 +40,6 @@ Authenticate to Twitter, and then enter the returned PIN back into
 the terminal.  Assuming all that works well, you will be authorized
 to make requests with the API. Twurl will tell you as much.
 
-If your consumer application has xAuth enabled, then you can use
-a variant of the above
-
-  % twurl authorize -u username -p password  \
-                    --consumer-key key       \
-                    --consumer-secret secret
-
-And, again assuming your username, password, key and secret is
-correct, will authorize you in one step.
-
 +-----------------+
 | Making Requests |
 +-----------------+
