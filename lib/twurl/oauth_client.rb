@@ -119,6 +119,9 @@ module Twurl
     end
 
     def exchange_credentials_for_access_token
+      if token and secret
+        return
+      end
       response = begin
         consumer.token_request(:post, consumer.access_token_path, nil, {}, client_auth_parameters)
       rescue OAuth::Unauthorized
