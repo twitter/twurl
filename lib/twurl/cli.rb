@@ -205,7 +205,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       end
 
       def token_secret
-        on('-S', '--token-secret', "Your token secret") do |secret|
+        on('-S', '--token-secret [secret]', "Your token secret") do |secret|
           options.token_secret = secret
         end
       end
