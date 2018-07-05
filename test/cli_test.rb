@@ -70,6 +70,11 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
       assert_equal 'the-key', options.consumer_key
     end
 
+    def test_extracting_the_token_secret
+      options = Twurl::CLI.parse_options([TEST_PATH, '-S', 'the-secret'])
+      assert_equal 'the-secret', options.token_secret
+    end
+
     def test_consumer_key_option_with_no_value_prompts_user_for_value
       mock(Twurl::CLI).prompt_for('Consumer key').times(1) { 'inputted-key'}
       options = Twurl::CLI.parse_options([TEST_PATH, '-c'])
