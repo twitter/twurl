@@ -4,7 +4,7 @@ module Twurl
     DEFAULT_COMMAND        = 'request'
     PATH_PATTERN           = /^\/\w+/
     PROTOCOL_PATTERN       = /^\w+:\/\//
-    README                 = File.dirname(__FILE__) + '/../../README'
+    README                 = File.dirname(__FILE__) + '/../../README.md'
     @output              ||= STDOUT
     class NoPathFound < Exception
     end
