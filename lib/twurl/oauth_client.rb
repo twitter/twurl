@@ -109,7 +109,14 @@ module Twurl
         request.body = multipart_body.join
         request.content_type = "multipart/form-data, boundary=\"#{boundary}\""
       elsif request.content_type && options.data
-        request.body = options.data.keys.first
+        if options.data.length == 1 && options.data.values.first == nil
+          request.body = options.data.keys.first
+        else
+          request.body = ''
+          options.data.each_with_index do |(key, value), i|
+            request.body << (i == 0 ? '' : '&') + key.to_s + (value == nil ? '' : '=' + value.to_s)
+          end
+        end
       elsif options.data
         request.set_form_data(options.data)
       end

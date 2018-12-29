@@ -157,6 +157,19 @@ class Twurl::OAuthClient::PerformingRequestsFromOptionsTest < Twurl::OAuthClient
     client.perform_request_from_options(options)
   end
 
+  def test_post_body_data_is_not_parsed_if_content_type_is_set
+
+    options.request_method = 'post'
+    options.data           = { '{ "data": "do' => nil, 'not' => 'parse', 'me' => '!" }' }
+    options.headers        = { 'Content-Type' => 'application/json' }
+
+    mock(client.consumer.http).request(
+      satisfy { |req| req.is_a?(Net::HTTP::Post) && req.body == '{ "data": "do&not=parse&me=!" }' }
+    )
+
+    client.perform_request_from_options(options)
+  end
+
   def test_content_type_is_set_to_form_encoded_if_not_set_and_data_in_options
     client = Twurl::OAuthClient.test_exemplar
 
