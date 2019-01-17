@@ -97,10 +97,10 @@ module Twurl
           multipart_body << "\r\n"
 
           if options.upload['base64']
-            enc = Base64.encode64(File.read(filename))
+            enc = Base64.encode64(File.binread(filename))
             multipart_body << enc
           else
-            multipart_body << File.read(filename)
+            multipart_body << File.binread(filename)
           end
         }
 
