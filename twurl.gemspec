@@ -10,12 +10,12 @@ Gem::Specification.new do |spec|
   spec.description = %q{Curl for the Twitter API}
   spec.email = ['marcel@twitter.com']
   spec.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  spec.extra_rdoc_files = %w(COPYING INSTALL README)
+  spec.extra_rdoc_files = %w(COPYING INSTALL README.md)
   spec.files = `git ls-files -z`.split("\x0").reject { |f| f.start_with?('test/') }
   spec.homepage = 'http://github.com/twitter/twurl'
   spec.licenses = ['MIT']
   spec.name = 'twurl'
-  spec.rdoc_options = ['--title', 'twurl -- OAuth-enabled curl for the Twitter API', '--main', 'README', '--line-numbers', '--inline-source']
+  spec.rdoc_options = ['--title', 'twurl -- OAuth-enabled curl for the Twitter API', '--main', 'README.md', '--line-numbers', '--inline-source']
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 1.9.3'
   spec.rubyforge_project = 'twurl'
