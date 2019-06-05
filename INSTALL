@@ -2,7 +2,7 @@
 | Install with RubyGems |
 +-----------------------+
 
-  sudo gem i twurl --source http://rubygems.org
+  sudo gem i twurl --source https://rubygems.org
 
 +---------------------+
 | Build from source   |

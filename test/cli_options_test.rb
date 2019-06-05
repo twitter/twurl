@@ -10,7 +10,7 @@ class Twurl::Options::Test < Minitest::Test
     options.protocol = 'http'
     options.host     = 'api.twitter.com'
 
-    assert_equal 'http://api.twitter.com', options.base_url
+    assert_equal 'https://api.twitter.com', options.base_url
   end
 
   def test_ssl_is_enabled_if_the_protocol_is_https
