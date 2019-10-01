@@ -159,11 +159,8 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         end
 
         def escape_params(params)
-          split_params = params.split("&").map do |param|
-            key, value = param.split('=', 2)
-            CGI::escape(key) + '=' + CGI::escape(value)
-          end
-          split_params.join("&")
+          split_params = URI::decode_www_form(params)
+          URI::encode_www_form(split_params)
         end
     end
 
