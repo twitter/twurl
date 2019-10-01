@@ -1,14 +1,23 @@
-bundler_args: --without development
+dist: xenial
 language: ruby
-rvm:
-  - 1.9.3
-  - 2.0.0
-  - jruby-head
-  - rbx-2
-  - ruby-head
+
+before_install:
+  - bundle config without 'development'
+
+branches:
+  only:
+    - master
+
 matrix:
+  fast_finish: true
   allow_failures:
     - rvm: jruby-head
     - rvm: ruby-head
-  fast_finish: true
-sudo: false
+    - rvm: rbx-2
+  include:
+    - rvm: 2.6.4
+    - rvm: 2.5.6
+    - rvm: 2.4.7
+    - rvm: jruby-head
+    - rvm: ruby-head
+    - rvm: rbx-2
