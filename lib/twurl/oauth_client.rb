@@ -111,7 +111,14 @@ module Twurl
       elsif request.content_type && options.data
         request.body = options.data.keys.first
       elsif options.data
-        request.set_form_data(options.data)
+        request.content_type = "application/x-www-form-urlencoded"
+        if options.data.length == 1 && options.data.values.first == nil
+          request.body = options.data.keys.first
+        else
+          request.body = options.data.map do |key, value|
+            "#{key}=#{CGI.escape value}"
+          end.join("&")
+        end
       end
 
       request.oauth!(consumer.http, consumer, access_token)
