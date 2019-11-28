@@ -136,7 +136,7 @@ class Twurl::RCFile::SavingTest < Minitest::Test
 
   private
     def rcfile_exists?
-      File.exists?(Twurl::RCFile.file_path)
+      File.exist?(Twurl::RCFile.file_path)
     end
 
     def delete_rcfile

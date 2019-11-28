@@ -20,7 +20,7 @@ class Twurl::OAuthClient::AbstractOAuthClientTest < Minitest::Test
     super
     Twurl.options = Twurl::Options.new
     # Make sure we don't do any disk IO in these tests
-    assert !File.exists?(Twurl::RCFile.file_path)
+    assert !File.exist?(Twurl::RCFile.file_path)
   end
 
   def test_nothing

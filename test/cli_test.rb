@@ -226,7 +226,7 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
   module ProxyOptionTests
     def test_not_specifying_proxy_sets_it_to_nil
       options = Twurl::CLI.parse_options([TEST_PATH])
-      assert_equal nil, options.proxy
+      assert_nil options.proxy
     end
 
     def test_setting_proxy_updates_to_requested_value
