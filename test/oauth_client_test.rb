@@ -46,12 +46,10 @@ class Twurl::OAuthClient::BasicRCFileLoadingTest < Twurl::OAuthClient::AbstractO
 end
 
 class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::AbstractOAuthClientTest
-  def test_if_username_is_supplied_and_no_profile_exists_for_username_then_new_client_is_created
-    mock(Twurl::OAuthClient).load_client_for_username(options.username).never
-    mock(Twurl::OAuthClient).load_new_client_from_options(options).times(1)
-    mock(Twurl::OAuthClient).load_default_client.never
-
-    Twurl::OAuthClient.load_from_options(options)
+  def test_if_username_is_supplied_and_no_profile_exists_for_username_then_no_profile_error
+    assert_raises Twurl::Exception do
+      Twurl::OAuthClient.load_from_options(options)
+    end
   end
 
   def test_if_username_is_supplied_and_profile_exists_for_username_then_client_is_loaded
