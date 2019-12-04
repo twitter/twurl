@@ -15,9 +15,9 @@ matrix:
     - rvm: ruby-head
     - rvm: rbx-2
   include:
-    - rvm: 2.6.4
-    - rvm: 2.5.6
-    - rvm: 2.4.7
+    - rvm: 2.6.5
+    - rvm: 2.5.7
+    - rvm: 2.4.9
     - rvm: jruby-head
     - rvm: ruby-head
     - rvm: rbx-2
