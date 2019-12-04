@@ -11,7 +11,9 @@ module Twurl
       def load_from_options(options)
         if rcfile.has_oauth_profile_for_username_with_consumer_key?(options.username, options.consumer_key)
           load_client_for_username_and_consumer_key(options.username, options.consumer_key)
-        elsif options.username || (options.command == 'authorize')
+        elsif options.username
+          load_client_for_username(options.username)
+        elsif options.command == 'authorize'
           load_new_client_from_options(options)
         else
           load_default_client
@@ -111,7 +113,14 @@ module Twurl
       elsif request.content_type && options.data
         request.body = options.data.keys.first
       elsif options.data
-        request.set_form_data(options.data)
+        request.content_type = "application/x-www-form-urlencoded"
+        if options.data.length == 1 && options.data.values.first == nil
+          request.body = options.data.keys.first
+        else
+          request.body = options.data.map do |key, value|
+            "#{key}=#{CGI.escape value}"
+          end.join("&")
+        end
       end
 
       request.oauth!(consumer.http, consumer, access_token)

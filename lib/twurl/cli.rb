@@ -44,6 +44,7 @@ module Twurl
         arguments = args.dup
 
         Twurl.options         = Options.new
+        Twurl.options.args    = arguments
         Twurl.options.trace   = false
         Twurl.options.data    = {}
         Twurl.options.headers = {}
@@ -159,11 +160,9 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         end
 
         def escape_params(params)
-          split_params = params.split("&").map do |param|
-            key, value = param.split('=', 2)
-            CGI::escape(key) + '=' + CGI::escape(value)
-          end
-          split_params.join("&")
+          CGI::parse(params).map do |key, value|
+            "#{CGI.escape key}=#{CGI.escape value.first}"
+          end.join("&")
         end
     end
 
@@ -230,9 +229,13 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
       def data
         on('-d', '--data [data]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
-          data.split('&').each do |pair|
-            key, value = pair.split('=', 2)
-            options.data[key] = value
+          if options.args.count { |item| /content-type: (.*)/i.match(item) } > 0
+            options.data[data] = nil
+          else
+            data.split('&').each do |pair|
+              key, value = pair.split('=', 2)
+              options.data[key] = value
+            end
           end
         end
       end
