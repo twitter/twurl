@@ -167,6 +167,20 @@ class Twurl::OAuthClient::PerformingRequestsFromOptionsTest < Twurl::OAuthClient
 
     client.perform_request_from_options(options)
   end
+
+  def test_user_agent_request_header_is_set
+    client = Twurl::OAuthClient.test_exemplar
+    expected_ua_string = "twurl version: #{Twurl::Version} platform: #{RUBY_ENGINE} #{RUBY_VERSION} (#{RUBY_PLATFORM})"
+
+    mock(client.consumer.http).request(
+      satisfy { |req|
+        req.is_a?(Net::HTTP::Get) &&
+        req['user-agent'] == expected_ua_string
+      }
+    )
+
+    client.perform_request_from_options(options)
+  end
 end
 
 class Twurl::OAuthClient::CredentialsForAccessTokenExchangeTest < Twurl::OAuthClient::AbstractOAuthClientTest
