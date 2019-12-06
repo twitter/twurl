@@ -144,7 +144,7 @@ module Twurl
     def perform_pin_authorize_workflow
       @request_token = consumer.get_request_token
       CLI.puts("Go to #{generate_authorize_url} and paste in the supplied PIN")
-      pin = gets
+      pin = STDIN.gets
       access_token = @request_token.get_access_token(:oauth_verifier => pin.chomp)
       {:oauth_token => access_token.token, :oauth_token_secret => access_token.secret}
     end
