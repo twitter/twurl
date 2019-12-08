@@ -124,7 +124,13 @@ module Twurl
       end
 
       request.oauth!(consumer.http, consumer, access_token)
+      request['user-agent'] = user_agent
       consumer.http.request(request, &block)
+    end
+
+    def user_agent
+      "twurl version: #{Version} " \
+      "platform: #{RUBY_ENGINE} #{RUBY_VERSION} (#{RUBY_PLATFORM})"
     end
 
     def exchange_credentials_for_access_token
