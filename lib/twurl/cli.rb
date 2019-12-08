@@ -90,16 +90,18 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           end
         end
 
-        if args.first.nil?
-          CLI.puts option_parser
-          raise NoPathFound, "No path found"
-        end
-
         arguments                 = option_parser.parse!(args)
         Twurl.options.command     = extract_command!(arguments)
         Twurl.options.path        = extract_path!(arguments)
-
         Twurl.options.subcommands = arguments
+        
+        if Twurl.options.command == DEFAULT_COMMAND and Twurl.options.path.nil?
+          if Twurl.options.args.first.nil? or Twurl.options.subcommands.nil?
+            CLI.puts option_parser
+            raise NoPathFound, "No path found"
+          end
+        end
+
         Twurl.options
       end
 
