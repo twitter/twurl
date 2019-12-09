@@ -206,6 +206,9 @@ module Twurl
 
     def configure_http!
       consumer.http.set_debug_output(Twurl.options.debug_output_io) if Twurl.options.trace
+      consumer.http.read_timeout = consumer.http.open_timeout = Twurl.options.timeout || 60
+      consumer.http.open_timeout = Twurl.options.connection_timeout if Twurl.options.connection_timeout
+      consumer.http.max_retries  = 0  # default is 1
       if Twurl.options.ssl?
         consumer.http.use_ssl     = true
         consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
