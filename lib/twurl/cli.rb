@@ -41,10 +41,8 @@ module Twurl
       end
 
       def parse_options(args)
-        arguments = args.dup
-
         Twurl.options         = Options.new
-        Twurl.options.args    = arguments
+        Twurl.options.args    = args.dup
         Twurl.options.trace   = false
         Twurl.options.data    = {}
         Twurl.options.headers = {}
@@ -97,13 +95,13 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         arguments                 = option_parser.parse!(args)
         Twurl.options.command     = extract_command!(arguments)
         Twurl.options.path        = extract_path!(arguments)
-
-        if Twurl.options.command == DEFAULT_COMMAND and Twurl.options.path.nil?
+        Twurl.options.subcommands = arguments
+        
+        if Twurl.options.command == DEFAULT_COMMAND and Twurl.options.path.nil? and Twurl.options.args.empty?
           CLI.puts option_parser
           raise NoPathFound, "No path found"
         end
 
-        Twurl.options.subcommands = arguments
         Twurl.options
       end
 
