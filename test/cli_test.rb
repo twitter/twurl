@@ -239,4 +239,19 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
     end
   end
   include ProxyOptionTests
+
+  module TimeoutOptionTests
+    def test_not_specifying_timeout_sets_it_to_nil
+      options = Twurl::CLI.parse_options([TEST_PATH])
+      assert_nil options.timeout
+      assert_nil options.connection_timeout
+    end
+
+    def test_setting_timeout_updates_to_requested_value
+      options = Twurl::CLI.parse_options([TEST_PATH, '--timeout', '10', '--connection-timeout', '5'])
+      assert_equal 10, options.timeout
+      assert_equal 5, options.connection_timeout
+    end
+  end
+  include TimeoutOptionTests
 end

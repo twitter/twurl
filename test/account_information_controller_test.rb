@@ -22,6 +22,7 @@ class Twurl::AccountInformationController::DispatchWithOneAuthorizedAccountTest 
     @options    = Twurl::Options.test_exemplar
     @client     = Twurl::OAuthClient.load_new_client_from_options(options)
     mock(Twurl::OAuthClient.rcfile).save.times(1)
+    Twurl::OAuthClient.rcfile.profiles.clear
     Twurl::OAuthClient.rcfile << client
     @controller = Twurl::AccountInformationController.new(client, options)
   end
@@ -51,10 +52,14 @@ class Twurl::AccountInformationController::DispatchWithOneUsernameThatHasAuthori
     @controller = Twurl::AccountInformationController.new(other_client, other_client_options)
   end
 
+  def teardown
+    Twurl::OAuthClient.rcfile.profiles[default_client.username][other_client.consumer_key].clear
+  end
+
   def test_authorized_account_is_displayed_and_marked_as_the_default
-    mock(Twurl::CLI).puts(default_client.username).times(1)
-    mock(Twurl::CLI).puts("  #{default_client.consumer_key} (default)").times(1)
-    mock(Twurl::CLI).puts("  #{other_client.consumer_key}").times(1)
+    mock(Twurl::CLI).puts(default_client.username).times(1).ordered
+    mock(Twurl::CLI).puts("  #{default_client.consumer_key} (default)").times(1).ordered
+    mock(Twurl::CLI).puts("  #{other_client.consumer_key}").times(1).ordered
 
     controller.dispatch
   end
