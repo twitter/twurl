@@ -87,6 +87,8 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             file
             filefield
             base64
+            timeout
+            connection_timeout
           end
         end
 
@@ -322,6 +324,18 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def base64
         on('-b', '--base64', 'Encode the uploaded file as base64 (default: false)') do |base64|
           options.upload['base64'] = base64
+        end
+      end
+
+      def timeout
+        on('--timeout [sec]', Integer, 'Number of seconds to wait for the request to be read (default: 60)') do |timeout|
+          options.timeout = timeout
+        end
+      end
+
+      def connection_timeout
+        on('--connection-timeout [sec]', Integer, 'Number of seconds to wait for the connection to open (default: 60)') do |connection_timeout|
+          options.connection_timeout = connection_timeout
         end
       end
     end

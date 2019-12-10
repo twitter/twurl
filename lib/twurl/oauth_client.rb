@@ -124,7 +124,13 @@ module Twurl
       end
 
       request.oauth!(consumer.http, consumer, access_token)
+      request['user-agent'] = user_agent
       consumer.http.request(request, &block)
+    end
+
+    def user_agent
+      "twurl version: #{Version} " \
+      "platform: #{RUBY_ENGINE} #{RUBY_VERSION} (#{RUBY_PLATFORM})"
     end
 
     def exchange_credentials_for_access_token
@@ -144,7 +150,7 @@ module Twurl
     def perform_pin_authorize_workflow
       @request_token = consumer.get_request_token
       CLI.puts("Go to #{generate_authorize_url} and paste in the supplied PIN")
-      pin = gets
+      pin = STDIN.gets
       access_token = @request_token.get_access_token(:oauth_verifier => pin.chomp)
       {:oauth_token => access_token.token, :oauth_token_secret => access_token.secret}
     end
@@ -200,6 +206,10 @@ module Twurl
 
     def configure_http!
       consumer.http.set_debug_output(Twurl.options.debug_output_io) if Twurl.options.trace
+      consumer.http.read_timeout = consumer.http.open_timeout = Twurl.options.timeout || 60
+      consumer.http.open_timeout = Twurl.options.connection_timeout if Twurl.options.connection_timeout
+      # Only override if Net::HTTP support max_retries (since Ruby >= 2.5)
+      consumer.http.max_retries = 0 if consumer.http.respond_to?(:max_retries=)
       if Twurl.options.ssl?
         consumer.http.use_ssl     = true
         consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
