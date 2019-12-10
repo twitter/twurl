@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.description = %q{Curl for the Twitter API}
   spec.email = ['marcel@twitter.com']
   spec.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  spec.extra_rdoc_files = %w(COPYING INSTALL README.md)
+  spec.extra_rdoc_files = %w(CODE_OF_CONDUCT.md INSTALL LICENSE README.md)
   spec.files = `git ls-files -z`.split("\x0").reject { |f| f.start_with?('test/') }
   spec.homepage = 'http://github.com/twitter/twurl'
   spec.licenses = ['MIT']
