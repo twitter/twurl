@@ -49,6 +49,24 @@ class Twurl::RequestController::RequestTest < Twurl::RequestController::Abstract
     assert_equal expected_body, Twurl::CLI.output.string
   end
 
+  def test_request_response_is_json_formatted
+    response_body = '{"data": {"text": "this is a fake response"}}'
+    expected_body = "{\n" \
+                    "  \"data\": {\n" \
+                    "    \"text\": \"this is a fake response\"\n" \
+                    "  }\n" \
+                    "}"
+    custom_options = options
+    custom_options.json_format = true
+    response      = Object.new
+    mock(response).read_body { |block| block.call response_body }
+    mock(client).perform_request_from_options(custom_options).times(1) { |custom_options, block| block.call(response) }
+
+    controller.perform_request
+
+    assert_equal expected_body, Twurl::CLI.output.string
+  end
+
   def test_invalid_or_unspecified_urls_report_error
     mock(Twurl::CLI).puts(Twurl::RequestController::NO_URI_MESSAGE).times(1)
     mock(client).perform_request_from_options(options).times(1) { raise URI::InvalidURIError }
