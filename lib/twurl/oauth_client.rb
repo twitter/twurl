@@ -15,9 +15,15 @@ module Twurl
           load_client_for_username(options.username)
         elsif options.command == 'authorize'
           load_new_client_from_options(options)
+        elsif options.command == 'request' && has_oauth_options?(options)
+          load_new_client_from_oauth_options(options)
         else
           load_default_client
         end
+      end
+
+      def has_oauth_options?(options)
+        (options.consumer_key && options.consumer_secret && options.access_token && options.token_secret) ? true : false
       end
 
       def load_client_for_username_and_consumer_key(username, consumer_key)
@@ -43,6 +49,14 @@ module Twurl
 
       def load_new_client_from_options(options)
         new(options.oauth_client_options.merge('password' => options.password))
+      end
+
+      def load_new_client_from_oauth_options(options)
+        new(options.oauth_client_options.merge(
+            'token' => options.access_token,
+            'secret' => options.token_secret
+          )
+        )
       end
 
       def load_default_client
