@@ -72,6 +72,18 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
 
     Twurl::OAuthClient.load_from_options(options)
   end
+
+  def test_if_all_oauth_options_are_supplied_then_client_is_loaded_from_options
+    options.username = nil
+    options.command = 'request'
+    options.access_token = 'test_access_token'
+    options.token_secret = 'test_token_secret'
+
+    mock(Twurl::OAuthClient).load_new_client_from_oauth_options(options).times(1)
+    mock(Twurl::OAuthClient).load_default_client.never
+
+    Twurl::OAuthClient.load_from_options(options)
+  end
 end
 
 class Twurl::OAuthClient::ClientLoadingForUsernameTest < Twurl::OAuthClient::AbstractOAuthClientTest
@@ -127,6 +139,21 @@ class Twurl::OAuthClient::NewClientLoadingFromOptionsTest < Twurl::OAuthClient::
 
   def test_oauth_options_are_passed_through
     assert_equal client.to_hash, new_client.to_hash
+  end
+end
+
+class Twurl::OAuthClient::NewClientLoadingFromOauthOptionsTest < Twurl::OAuthClient::AbstractOAuthClientTest
+  attr_reader :new_client
+  def setup
+    super
+    options.access_token = 'test_access_token'
+    options.token_secret = 'test_token_secret'
+    @new_client = Twurl::OAuthClient.load_new_client_from_oauth_options(options)
+  end
+
+  def test_attributes_are_updated
+    assert_equal options.access_token, new_client.token
+    assert_equal options.token_secret, new_client.secret
   end
 end
 
