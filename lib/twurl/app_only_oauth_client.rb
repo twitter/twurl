@@ -19,7 +19,7 @@ module Twurl
     end
 
     def exchange_credentials_for_access_token
-      response = token_request
+      response = fetch_oauth2_token
       if response.nil? || response[:access_token].nil?
         raise Exception, AUTHORIZATION_FAILED_MESSAGE
       end
@@ -66,7 +66,7 @@ module Twurl
       http
     end
 
-    def token_request
+    def fetch_oauth2_token
       request = Net::HTTP::Post.new('/oauth2/token')
       request.body = URI.encode_www_form(request_data)
       request['user-agent'] = user_agent
