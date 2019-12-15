@@ -13,12 +13,14 @@ module Twurl
           load_client_for_username_and_consumer_key(options.username, options.consumer_key)
         elsif options.username
           load_client_for_username(options.username)
+        elsif options.command == 'authorize' && options.app_only
+          load_client_for_app_only_auth(options, options.consumer_key)
         elsif options.command == 'authorize'
           load_new_client_from_options(options)
         elsif options.command == 'request' && has_oauth_options?(options)
           load_new_client_from_oauth_options(options)
         else
-          load_default_client
+          load_default_client(options)
         end
       end
 
@@ -59,9 +61,23 @@ module Twurl
         )
       end
 
-      def load_default_client
+      def load_client_for_app_only_auth(options, consumer_key)
+        AppOnlyOAuthClient.new(
+          options.oauth_client_options.merge(
+            'bearer_token' => rcfile.bearer_tokens.to_hash[consumer_key]
+          )
+        )
+      end
+
+      def load_default_client(options)
         raise Exception, "You must authorize first" unless rcfile.default_profile
-        load_client_for_username_and_consumer_key(*rcfile.default_profile)
+        if options.app_only
+            raise Exception, "No available bearer token found for consumer_key:#{rcfile.default_profile_consumer_key}" \
+              unless rcfile.has_bearer_token_for_consumer_key?(rcfile.default_profile_consumer_key)
+            load_client_for_app_only_auth(options, rcfile.default_profile_consumer_key)
+        else
+          load_client_for_username_and_consumer_key(*rcfile.default_profile)
+        end
       end
     end
 
@@ -88,7 +104,7 @@ module Twurl
         :copy => Net::HTTP::Copy
       }
 
-    def perform_request_from_options(options, &block)
+    def build_request_from_options(options, &block)
       request_class = METHODS.fetch(options.request_method.to_sym)
       request = request_class.new(options.path, options.headers)
 
@@ -136,7 +152,11 @@ module Twurl
           end.join("&")
         end
       end
+      request
+    end
 
+    def perform_request_from_options(options, &block)
+      request = build_request_from_options(options)
       request.oauth!(consumer.http, consumer, access_token)
       request['user-agent'] = user_agent
       consumer.http.request(request, &block)

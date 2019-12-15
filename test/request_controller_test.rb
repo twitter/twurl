@@ -24,6 +24,7 @@ class Twurl::RequestController::DispatchTest < Twurl::RequestController::Abstrac
     mock(client).needs_to_authorize? { false }.times(1)
     mock(controller).perform_request.times(1)
 
+    options.path = '/test/path'
     controller.dispatch
   end
 
@@ -50,7 +51,7 @@ class Twurl::RequestController::RequestTest < Twurl::RequestController::Abstract
   end
 
   def test_invalid_or_unspecified_urls_report_error
-    mock(Twurl::CLI).puts(Twurl::RequestController::NO_URI_MESSAGE).times(1)
+    mock(Twurl::CLI).puts(Twurl::RequestController::INVALID_URI_MESSAGE).times(1)
     mock(client).perform_request_from_options(options).times(1) { raise URI::InvalidURIError }
 
     controller.perform_request

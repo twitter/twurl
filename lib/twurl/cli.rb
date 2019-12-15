@@ -89,6 +89,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             base64
             timeout
             connection_timeout
+            app_only
           end
         end
 
@@ -336,6 +337,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def connection_timeout
         on('--connection-timeout [sec]', Integer, 'Number of seconds to wait for the connection to open (default: 60)') do |connection_timeout|
           options.connection_timeout = connection_timeout
+        end
+      end
+
+      def app_only
+        on('--oauth2', "Use application-only authentication (OAuth2)") do |app_only|
+          options.app_only = true
         end
       end
     end
