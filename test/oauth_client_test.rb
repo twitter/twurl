@@ -84,6 +84,29 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
 
     Twurl::OAuthClient.load_from_options(options)
   end
+
+  def test_if_authorize_app_only_client_is_loaded
+    options = Twurl::Options.test_app_only_exemplar
+    options.command = 'authorize'
+
+    mock(Twurl::OAuthClient).load_default_client.never
+    mock(Twurl::OAuthClient).load_client_for_app_only_auth(options, options.consumer_key).times(1)
+
+    Twurl::OAuthClient.load_from_options(options)
+  end
+
+  def test_if_oauth2_options_is_supplied_on_request_then_app_only_client_is_loaded
+    options = Twurl::Options.test_app_only_exemplar
+    options.command = 'request'
+
+    mock(Twurl::OAuthClient.rcfile).save.times(any_times)
+    Twurl::OAuthClient.rcfile << client
+    Twurl::OAuthClient.rcfile.bearer_token(options.consumer_key, options.bearer_token)
+    mock.proxy(Twurl::OAuthClient).load_default_client(options).times(1)
+    mock(Twurl::OAuthClient).load_client_for_app_only_auth(options, options.consumer_key).times(1)
+
+    Twurl::OAuthClient.load_from_options(options)
+  end
 end
 
 class Twurl::OAuthClient::ClientLoadingForUsernameTest < Twurl::OAuthClient::AbstractOAuthClientTest

@@ -254,4 +254,17 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
     end
   end
   include TimeoutOptionTests
+
+  module AppOnlyOptionTests
+    def test_not_specifying_app_only_sets_it_to_nil
+      options = Twurl::CLI.parse_options([TEST_PATH])
+      assert_nil options.app_only
+    end
+
+    def test_specifying_app_only_updates_to_requested_value
+      options = Twurl::CLI.parse_options([TEST_PATH, '--oauth'])
+      assert options.app_only
+    end
+  end
+  include AppOnlyOptionTests
 end
