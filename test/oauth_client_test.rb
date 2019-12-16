@@ -105,6 +105,16 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
     mock.proxy(Twurl::OAuthClient).load_default_client(options).times(1)
     mock(Twurl::OAuthClient).load_client_for_app_only_auth(options, options.consumer_key).times(1)
 
+    options.consumer_key = nil
+    Twurl::OAuthClient.load_from_options(options)
+  end
+
+  def test_if_oauth2_and_consumer_key_options_are_supplied_on_request_then_app_only_client_is_loaded
+    options = Twurl::Options.test_app_only_exemplar
+    options.command = 'request'
+
+    mock(Twurl::OAuthClient).load_client_for_non_profile_app_only_auth(options).times(1)
+
     Twurl::OAuthClient.load_from_options(options)
   end
 end

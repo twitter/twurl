@@ -19,6 +19,8 @@ module Twurl
           load_new_client_from_options(options)
         elsif options.command == 'request' && has_oauth_options?(options)
           load_new_client_from_oauth_options(options)
+        elsif options.command == 'request' && options.app_only && options.consumer_key
+          load_client_for_non_profile_app_only_auth(options)
         else
           load_default_client(options)
         end
@@ -73,8 +75,25 @@ module Twurl
         end
       end
 
+      def load_client_for_non_profile_app_only_auth(options)
+        AppOnlyOAuthClient.new(
+          options.oauth_client_options.merge(
+            'bearer_token' => rcfile.bearer_tokens.to_hash[options.consumer_key]
+          )
+        )
+      end
+
       def load_default_client(options)
-        raise Exception, "You must authorize first" unless rcfile.default_profile
+        return if options.command == 'oauth2_tokens'
+
+        exception_message = "You must authorize first."
+        app_only_exception_message = "To use --oauth2 option, you need to authorize (OAuth1.0a) and create at least one user profile (~/.twurlrc):\n\n" \
+                                     "twurl authorize -c key -s secret\n" \
+                                     "\nor, you can specify issued token's consumer_key directly:\n" \
+                                     "(to see your issued tokens: 'twurl oauth2_tokens')\n\n" \
+                                     "twurl --oauth2 -c key '/path/to/api'"
+
+        raise Exception, "#{options.app_only ? app_only_exception_message : exception_message}" unless rcfile.default_profile
         if options.app_only
             raise Exception, "No available bearer token found for consumer_key:#{rcfile.default_profile_consumer_key}" \
               unless rcfile.has_bearer_token_for_consumer_key?(rcfile.default_profile_consumer_key)

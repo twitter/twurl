@@ -1,6 +1,6 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS     = %w(authorize accounts alias set)
+    SUPPORTED_COMMANDS     = %w(authorize accounts oauth2_tokens alias set)
     DEFAULT_COMMAND        = 'request'
     PATH_PATTERN           = /^\/\w+/
     PROTOCOL_PATTERN       = /^\w+:\/\//
@@ -28,6 +28,8 @@ module Twurl
                        AuthorizationController
                      when 'accounts'
                        AccountInformationController
+                     when 'oauth2_tokens'
+                       AppOnlyTokenInformationController
                      when 'alias'
                        AliasesController
                      when 'set'
