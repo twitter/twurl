@@ -73,6 +73,24 @@ the -X (or --request-method) option.
 twurl -X POST /1.1/statuses/destroy/1234567890.json
 ```
 
+Accessing Different Hosts
+-------------------------
+
+You can access different hosts for other Twitter APIs using the -H flag.
+
+```sh
+twurl -H "ads-api.twitter.com" "/5/accounts"
+```
+
+Uploading Media
+---------------
+
+To upload binary files, you can format the call as a form post. Below, the binary is "/path/to/media.jpg" and the form field is "media":
+
+```sh
+twurl -H "upload.twitter.com" -X POST "/1.1/media/upload.json" --file "/path/to/media.jpg" --file-field "media"
+```
+
 Creating aliases
 ----------------
 
