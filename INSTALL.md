@@ -22,7 +22,7 @@ $ gem install bundler
 ```
 
 ```sh
-$ git clone https://github.com/twitter/twurl .
+$ git clone https://github.com/twitter/twurl
 $ cd twurl
 $ bundle install
 ```
