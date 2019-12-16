@@ -62,11 +62,15 @@ module Twurl
       end
 
       def load_client_for_app_only_auth(options, consumer_key)
-        AppOnlyOAuthClient.new(
-          options.oauth_client_options.merge(
-            'bearer_token' => rcfile.bearer_tokens.to_hash[consumer_key]
+        if options.command == 'authorize'
+          AppOnlyOAuthClient.new(options)
+        else
+          AppOnlyOAuthClient.new(
+            options.oauth_client_options.merge(
+              'bearer_token' => rcfile.bearer_tokens.to_hash[consumer_key]
+            )
           )
-        )
+        end
       end
 
       def load_default_client(options)
