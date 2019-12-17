@@ -150,7 +150,7 @@ twurl accounts
 Contributors
 ------------
 
-Marcel Molina <marcel@twitter.com> / @noradio
+Marcel Molina / @noradio
 Erik Michaels-Ober / @sferik
 
 and there are many [more](https://github.com/twitter/twurl/graphs/contributors)!
