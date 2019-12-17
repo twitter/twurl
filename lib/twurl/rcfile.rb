@@ -103,7 +103,7 @@ module Twurl
     end
 
     def has_bearer_token_for_consumer_key?(consumer_key)
-      bearer_tokens.to_hash.has_key?(consumer_key)
+      bearer_tokens.nil? ? false : bearer_tokens.to_hash.has_key?(consumer_key)
     end
 
     def <<(oauth_client)
