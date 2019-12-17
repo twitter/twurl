@@ -89,6 +89,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             file
             filefield
             base64
+            json_format
             timeout
             connection_timeout
             app_only
@@ -327,6 +328,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def base64
         on('-b', '--base64', 'Encode the uploaded file as base64 (default: false)') do |base64|
           options.upload['base64'] = base64
+        end
+      end
+
+      def json_format
+        on('-j', '--json-pretty', 'Format response body to JSON pretty style') do |json_format|
+          options.json_format = true
         end
       end
 

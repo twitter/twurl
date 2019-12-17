@@ -9,7 +9,7 @@ require 'twurl'
 require 'minitest/autorun'
 require 'rr'
 
-Twurl::RCFile.directory = ENV['TMPDIR']
+Twurl::RCFile.directory = ENV['TMPDIR'] || File.dirname(__FILE__)
 
 module Twurl
   class Options
