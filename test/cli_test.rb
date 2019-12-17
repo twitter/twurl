@@ -262,7 +262,7 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
     end
 
     def test_specifying_app_only_updates_to_requested_value
-      options = Twurl::CLI.parse_options([TEST_PATH, '--oauth'])
+      options = Twurl::CLI.parse_options([TEST_PATH, '--bearer'])
       assert options.app_only
     end
   end

@@ -95,7 +95,7 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
     Twurl::OAuthClient.load_from_options(options)
   end
 
-  def test_if_oauth2_options_is_supplied_on_request_then_app_only_client_is_loaded
+  def test_if_app_only_options_is_supplied_on_request_then_app_only_client_is_loaded
     options = Twurl::Options.test_app_only_exemplar
     options.command = 'request'
 
@@ -109,7 +109,7 @@ class Twurl::OAuthClient::ClientLoadingFromOptionsTest < Twurl::OAuthClient::Abs
     Twurl::OAuthClient.load_from_options(options)
   end
 
-  def test_if_oauth2_and_consumer_key_options_are_supplied_on_request_then_app_only_client_is_loaded
+  def test_if_app_only_and_consumer_key_options_are_supplied_on_request_then_app_only_client_is_loaded
     options = Twurl::Options.test_app_only_exemplar
     options.command = 'request'
 

@@ -84,14 +84,14 @@ module Twurl
       end
 
       def load_default_client(options)
-        return if options.command == 'oauth2_tokens'
+        return if options.command == 'bearer_tokens'
 
         exception_message = "You must authorize first."
-        app_only_exception_message = "To use --oauth2 option, you need to authorize (OAuth1.0a) and create at least one user profile (~/.twurlrc):\n\n" \
+        app_only_exception_message = "To use --bearer option, you need to authorize (OAuth1.0a) and create at least one user profile (~/.twurlrc):\n\n" \
                                      "twurl authorize -c key -s secret\n" \
                                      "\nor, you can specify issued token's consumer_key directly:\n" \
-                                     "(to see your issued tokens: 'twurl oauth2_tokens')\n\n" \
-                                     "twurl --oauth2 -c key '/path/to/api'"
+                                     "(to see your issued tokens: 'twurl bearer_tokens')\n\n" \
+                                     "twurl --bearer -c key '/path/to/api'"
 
         raise Exception, "#{options.app_only ? app_only_exception_message : exception_message}" unless rcfile.default_profile
         if options.app_only

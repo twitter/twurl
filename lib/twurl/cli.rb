@@ -1,6 +1,6 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS     = %w(authorize accounts oauth2_tokens alias set)
+    SUPPORTED_COMMANDS     = %w(authorize accounts bearer_tokens alias set)
     DEFAULT_COMMAND        = 'request'
     PATH_PATTERN           = /^\/\w+/
     PROTOCOL_PATTERN       = /^\w+:\/\//
@@ -28,7 +28,7 @@ module Twurl
                        AuthorizationController
                      when 'accounts'
                        AccountInformationController
-                     when 'oauth2_tokens'
+                     when 'bearer_tokens'
                        AppOnlyTokenInformationController
                      when 'alias'
                        AliasesController
@@ -350,7 +350,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       end
 
       def app_only
-        on('--oauth2', "Use application-only authentication (OAuth2)") do |app_only|
+        on('--bearer', "Use application-only authentication (Bearer Token)") do |app_only|
           options.app_only = true
         end
       end
