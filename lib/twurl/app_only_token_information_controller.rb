@@ -1,10 +1,10 @@
 module Twurl
   class AppOnlyTokenInformationController < AbstractCommandController
-    NO_ISSUED_TOKENS_MESSAGE = "No issued application-only (OAuth2) tokens"
+    NO_ISSUED_TOKENS_MESSAGE = "No issued application-only (Bearer) tokens"
 
     def dispatch
       rcfile = OAuthClient.rcfile
-      if rcfile.empty? || rcfile.bearer_tokens.empty?
+      if rcfile.empty? || rcfile.bearer_tokens.nil?
         CLI.puts NO_ISSUED_TOKENS_MESSAGE
       else
         tokens = rcfile.bearer_tokens
