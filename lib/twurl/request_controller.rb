@@ -15,7 +15,9 @@ module Twurl
 
     def perform_request
       client.perform_request_from_options(options) { |response|
-        response.read_body { |chunk| CLI.print chunk }
+        response.read_body { |body|
+          CLI.print options.json_format ? JsonFormatter.format(body) : body
+        }
       }
     rescue URI::InvalidURIError
       CLI.puts NO_URI_MESSAGE
@@ -23,6 +25,15 @@ module Twurl
       CLI.puts READ_TIMEOUT_MESSAGE
     rescue Net::OpenTimeout
       CLI.puts OPEN_TIMEOUT_MESSAGE
+    end
+  end
+
+  class JsonFormatter
+    def self.format(string)
+      json = JSON.parse(string)
+      (json.is_a?(Array) || json.is_a?(Hash)) ? JSON.pretty_generate(json) : string
+    rescue JSON::ParserError, TypeError
+      string
     end
   end
 end
