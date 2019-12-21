@@ -36,4 +36,5 @@ test/version_tmp
 tmp
 tmtags
 tramp
+.vscode
 vendor
