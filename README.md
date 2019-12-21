@@ -1,5 +1,4 @@
-Twurl
-=====
+# Twurl
 
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/twitter/twurl/blob/master/LICENSE)
  [![Gem Version](https://badge.fury.io/rb/twurl.svg)](https://badge.fury.io/rb/twurl)
@@ -13,8 +12,7 @@ as defining aliases for common requests, as well as support for
 multiple access tokens to easily switch between different client
 applications and Twitter accounts.
 
-Installing Twurl
-----------------
+## Installing Twurl
 
 Twurl can be installed using RubyGems:
 
@@ -22,8 +20,7 @@ Twurl can be installed using RubyGems:
 gem install twurl
 ```
 
-Getting Started
----------------
+## Getting Started
 
 If you haven't already, the first thing to do is apply for a developer account to access Twitter APIs:
 
@@ -47,8 +44,7 @@ Authenticate to Twitter, and then enter the returned PIN back into
 the terminal.  Assuming all that works well, you will be authorized
 to make requests with the API. Twurl will tell you as much.
 
-Making Requests
----------------
+## Making Requests
 
 The simplest request just requires that you specify the path you
 want to request.
@@ -73,8 +69,30 @@ the -X (or --request-method) option.
 twurl -X POST /1.1/statuses/destroy/1234567890.json
 ```
 
-Accessing Different Hosts
--------------------------
+## Using Bearer Tokens (Application-only authentication)
+
+You can generate a bearer token using `--bearer` option in combination with the `authorize` subcommand.
+
+```sh
+twurl authorize --bearer --consumer-key key       \
+                         --consumer-secret secret
+```
+
+And then, you can make a request using a generated bearer token using `--bearer` request option.
+
+```sh
+twurl --bearer '/1.1/search/tweets.json?q=hello'
+```
+
+To list your generated bearer tokens, you can use the `bearer_tokens` subcommand.
+
+```sh
+twurl bearer_tokens
+```
+
+This will print a pair of consumer_key and its associated bearer token. Note, tokes are omitted from this output.
+
+## Accessing Different Hosts
 
 You can access different hosts for other Twitter APIs using the -H flag.
 
@@ -82,8 +100,7 @@ You can access different hosts for other Twitter APIs using the -H flag.
 twurl -H "ads-api.twitter.com" "/5/accounts"
 ```
 
-Uploading Media
----------------
+## Uploading Media
 
 To upload binary files, you can format the call as a form post. Below, the binary is "/path/to/media.jpg" and the form field is "media":
 
@@ -91,8 +108,7 @@ To upload binary files, you can format the call as a form post. Below, the binar
 twurl -H "upload.twitter.com" -X POST "/1.1/media/upload.json" --file "/path/to/media.jpg" --file-field "media"
 ```
 
-Creating aliases
-----------------
+## Creating aliases
 
 ```sh
 twurl alias h /1.1/statuses/home_timeline.json
@@ -111,10 +127,9 @@ twurl alias tweet /1.1/statuses/update.json
 twurl tweet -d "status=Aliases in twurl are convenient"
 ```
 
-Changing your default profile
------------------------------
+## Changing your default profile
 
-The first time you authorize a client application to make requests on behalf of your account, twurl stores your access token information in its .twurlrc file. Subsequent requests will use this profile as the default profile. You can use the 'accounts' subcommand to see what client applications have been authorized for what user names:
+The first time you authorize a client application to make requests on behalf of your account, twurl stores your access token information in its `~/.twurlrc` file. Subsequent requests will use this profile as the default profile. You can use the `accounts` subcommand to see what client applications have been authorized for what user names:
 
 ```sh
 twurl accounts
@@ -125,7 +140,7 @@ twurl accounts
     guT9RsJbNQgVe6AwoY9BA
 ```
 
-Notice that one of those consumer keys is marked as the default. To change the default use the 'set' subcommand, passing then either just the username, if it's unambiguous, or the username and consumer key pair if it isn't unambiguous:
+Notice that one of those consumer keys is marked as the default. To change the default use the `set` subcommand, passing then either just the username, if it's unambiguous, or the username and consumer key pair if it isn't unambiguous:
 
 ```sh
 twurl set default testiverse
@@ -147,8 +162,11 @@ twurl accounts
     guT9RsJbNQgVe6AwoY9BA
 ```
 
-Contributors
-------------
+### Profiles and Bearer Tokens
+
+While changing the default profile allows you to select which access token (OAuth1.0a) to use, bearer tokens don't link to any user profiles as the Application-only authentication doesn't require user context. That is, you can make an application-only request regardless of your default profile if you specify the `-c` (--consumer-key) option once you generate a bearer token with this consumer key. By default, twurl reads the current profile's consumer key and its associated bearer token from `~/.twurlrc` file.
+
+## Contributors
 
 Marcel Molina / @noradio
 
