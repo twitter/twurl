@@ -90,7 +90,7 @@ To list your generated bearer tokens, you can use the `bearer_tokens` subcommand
 twurl bearer_tokens
 ```
 
-This will print a pair of consumer_key and its associated bearer token. Note, tokes are omitted from this output.
+This will print a pair of consumer_key and its associated bearer token. Note, tokens are omitted from this output.
 
 ## Accessing Different Hosts
 
