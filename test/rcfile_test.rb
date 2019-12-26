@@ -108,6 +108,27 @@ class Twurl::RCFile::UpdatingTest < Minitest::Test
   end
 end
 
+class Twurl::RCFile::BearerTokenTest < Minitest::Test
+  attr_reader :rcfile
+  def setup
+    @rcfile = Twurl::RCFile.new
+    mock(rcfile).save.times(any_times)
+  end
+
+  def test_save_bearer_token
+    options = Twurl::Options.test_app_only_exemplar
+    expected_response = {
+      options.consumer_key => options.bearer_token
+    }
+    rcfile << Twurl::OAuthClient.test_exemplar
+    rcfile.bearer_token(options.consumer_key, options.bearer_token)
+
+    client = Twurl::AppOnlyOAuthClient.test_app_only_exemplar
+
+    assert_equal expected_response, rcfile.bearer_tokens
+  end
+end
+
 class Twurl::RCFile::SavingTest < Minitest::Test
   attr_reader :rcfile
   def setup

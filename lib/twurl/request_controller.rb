@@ -1,6 +1,7 @@
 module Twurl
   class RequestController < AbstractCommandController
-    NO_URI_MESSAGE = "No URI specified"
+    NO_URI_MESSAGE       = 'No URI specified'
+    INVALID_URI_MESSAGE  = 'Invalid URI detected'
     READ_TIMEOUT_MESSAGE = 'A timeout occurred (Net::ReadTimeout). ' \
                            'Please try again or increase the value using --timeout option.'
     OPEN_TIMEOUT_MESSAGE = 'A timeout occurred (Net::OpenTimeout). ' \
@@ -10,6 +11,7 @@ module Twurl
         raise Exception, "You need to authorize first."
       end
       options.path ||= OAuthClient.rcfile.alias_from_options(options)
+      raise Exception, NO_URI_MESSAGE if options.path.empty?
       perform_request
     end
 
@@ -20,7 +22,7 @@ module Twurl
         }
       }
     rescue URI::InvalidURIError
-      CLI.puts NO_URI_MESSAGE
+      CLI.puts INVALID_URI_MESSAGE
     rescue Net::ReadTimeout
       CLI.puts READ_TIMEOUT_MESSAGE
     rescue Net::OpenTimeout
