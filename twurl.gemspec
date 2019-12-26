@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Marcel Molina", "Erik Michaels-Ober", "@TwitterDev team"]
   spec.description = %q{Curl for the Twitter API}
   spec.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  spec.extra_rdoc_files = %w(CODE_OF_CONDUCT.md CONTRIBUTING.md INSTALL LICENSE README.md)
+  spec.extra_rdoc_files = %w(CODE_OF_CONDUCT.md CONTRIBUTING.md INSTALL.md LICENSE README.md)
   spec.files = `git ls-files -z`.split("\x0").reject { |f| f.start_with?('test/') }
   spec.homepage = 'http://github.com/twitter/twurl'
   spec.licenses = ['MIT']
