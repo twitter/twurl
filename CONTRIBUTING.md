@@ -9,7 +9,21 @@ We follow the [GitHub Flow Workflow](https://guides.github.com/introduction/flow
 1. Fork the project
 2. Check out the `master` branch
 3. Create a feature branch
-4. Write code and tests for your change
+4. Write code and tests for your change  
+
+```sh
+$ cd ./twurl
+
+# install twurl from source
+$ bundle install
+
+# run twurl from source
+$ bundle exec twurl -v
+
+# run tests
+$ bundle exec rake
+```
+
 5. From your branch, make a pull request against `twitter/twurl/master`
 6. Work with repo maintainers to get your change reviewed
 7. Wait for your change to be pulled into `twitter/twurl/master`
