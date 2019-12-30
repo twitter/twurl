@@ -23,6 +23,16 @@ module Twurl
         options.subcommands     = []
         options
       end
+
+      def test_app_only_exemplar
+        options                 = new
+        options.app_only        = true
+        options.consumer_key    = '123456789'
+        options.consumer_secret = '987654321'
+        options.bearer_token    = 'test_bearer_token'
+        options.subcommands     = []
+        options
+      end
     end
   end
 
@@ -36,6 +46,19 @@ module Twurl
         end
 
         load_new_client_from_options(options)
+      end
+    end
+  end
+
+  class AppOnlyOAuthClient
+    class << self
+      def test_app_only_exemplar
+        options = Twurl::Options.test_app_only_exemplar
+        Twurl::AppOnlyOAuthClient.new(
+          options.oauth_client_options.merge(
+            'bearer_token' => options.bearer_token
+          )
+        )
       end
     end
   end

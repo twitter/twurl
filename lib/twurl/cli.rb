@@ -1,6 +1,6 @@
 module Twurl
   class CLI
-    SUPPORTED_COMMANDS     = %w(authorize accounts alias set)
+    SUPPORTED_COMMANDS     = %w(authorize accounts bearer_tokens alias set)
     DEFAULT_COMMAND        = 'request'
     PATH_PATTERN           = /^\/\w+/
     PROTOCOL_PATTERN       = /^\w+:\/\//
@@ -28,6 +28,8 @@ module Twurl
                        AuthorizationController
                      when 'accounts'
                        AccountInformationController
+                     when 'bearer_tokens'
+                       AppOnlyTokenInformationController
                      when 'alias'
                        AliasesController
                      when 'set'
@@ -90,6 +92,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             json_format
             timeout
             connection_timeout
+            app_only
           end
         end
 
@@ -343,6 +346,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def connection_timeout
         on('--connection-timeout [sec]', Integer, 'Number of seconds to wait for the connection to open (default: 60)') do |connection_timeout|
           options.connection_timeout = connection_timeout
+        end
+      end
+
+      def app_only
+        on('--bearer', "Use application-only authentication (Bearer Token)") do |app_only|
+          options.app_only = true
         end
       end
     end

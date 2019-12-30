@@ -52,6 +52,11 @@ module Twurl
       configuration['default_profile']
     end
 
+    def default_profile_consumer_key
+      username, consumer_key = configuration['default_profile']
+      consumer_key
+    end
+
     def default_profile=(profile)
       configuration['default_profile'] = [profile.username, profile.consumer_key]
     end
@@ -70,6 +75,16 @@ module Twurl
       data['aliases']
     end
 
+    def bearer_token(consumer_key, bearer_token)
+      data['bearer_tokens'] ||= {}
+      data['bearer_tokens'][consumer_key] = bearer_token
+      save
+    end
+
+    def bearer_tokens
+      data['bearer_tokens']
+    end
+
     def alias_from_options(options)
       options.subcommands.each do |potential_alias|
         if path = alias_from_name(potential_alias)
@@ -85,6 +100,10 @@ module Twurl
     def has_oauth_profile_for_username_with_consumer_key?(username, consumer_key)
       user_profiles = self[username]
       !user_profiles.nil? && !user_profiles[consumer_key].nil?
+    end
+
+    def has_bearer_token_for_consumer_key?(consumer_key)
+      bearer_tokens.nil? ? false : bearer_tokens.to_hash.has_key?(consumer_key)
     end
 
     def <<(oauth_client)
