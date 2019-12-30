@@ -10,7 +10,7 @@ $ gem install twurl
 ```sh
 # verify installation
 $ twurl -v
-0.9.4
+0.9.5
 ```
 
 ## Install from source
