@@ -1,0 +1,13 @@
+{
+    "name": "twurl dev container",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "workspaceFolder": "/usr/src/app",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "shutdownAction": "none",
+    "extensions": [
+		"rebornix.Ruby"
+	]
+}
