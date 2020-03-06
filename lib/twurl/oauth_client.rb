@@ -9,7 +9,11 @@ module Twurl
       end
 
       def load_from_options(options)
-        if rcfile.has_oauth_profile_for_username_with_consumer_key?(options.username, options.consumer_key)
+        if options.command == 'request' && has_oauth_options?(options)
+          load_new_client_from_oauth_options(options)
+        elsif options.command == 'request' && options.app_only && options.consumer_key
+          load_client_for_non_profile_app_only_auth(options)
+        elsif rcfile.has_oauth_profile_for_username_with_consumer_key?(options.username, options.consumer_key)
           load_client_for_username_and_consumer_key(options.username, options.consumer_key)
         elsif options.username
           load_client_for_username(options.username)
@@ -17,10 +21,6 @@ module Twurl
           load_client_for_app_only_auth(options, options.consumer_key)
         elsif options.command == 'authorize'
           load_new_client_from_options(options)
-        elsif options.command == 'request' && has_oauth_options?(options)
-          load_new_client_from_oauth_options(options)
-        elsif options.command == 'request' && options.app_only && options.consumer_key
-          load_client_for_non_profile_app_only_auth(options)
         else
           load_default_client(options)
         end
