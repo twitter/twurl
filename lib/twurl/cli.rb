@@ -96,7 +96,15 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           end
         end
 
-        arguments                 = option_parser.parse!(args)
+        begin
+          arguments               = option_parser.parse!(args)
+        rescue OptionParser::InvalidOption
+          CLI.puts "ERROR: undefined option"
+          exit
+        rescue
+          CLI.puts "ERROR: invalid argument"
+          exit
+        end
         Twurl.options.command     = extract_command!(arguments)
         Twurl.options.path        = extract_path!(arguments)
         Twurl.options.subcommands = arguments
