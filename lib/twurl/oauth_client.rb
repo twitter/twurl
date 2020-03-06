@@ -52,7 +52,7 @@ module Twurl
       end
 
       def load_new_client_from_options(options)
-        new(options.oauth_client_options.merge('password' => options.password))
+        new(options.oauth_client_options)
       end
 
       def load_new_client_from_oauth_options(options)
@@ -106,10 +106,9 @@ module Twurl
 
     OAUTH_CLIENT_OPTIONS = %w[username consumer_key consumer_secret token secret]
     attr_reader *OAUTH_CLIENT_OPTIONS
-    attr_reader :username, :password
+    attr_reader :username
     def initialize(options = {})
       @username        = options['username']
-      @password        = options['password']
       @consumer_key    = options['consumer_key']
       @consumer_secret = options['consumer_secret']
       @token           = options['token']
@@ -192,16 +191,12 @@ module Twurl
 
     def exchange_credentials_for_access_token
       response = begin
-        consumer.token_request(:post, consumer.access_token_path, nil, {}, client_auth_parameters)
+        consumer.token_request(:post, consumer.access_token_path, nil, {})
       rescue OAuth::Unauthorized
         perform_pin_authorize_workflow
       end
       @token   = response[:oauth_token]
       @secret  = response[:oauth_token_secret]
-    end
-
-    def client_auth_parameters
-      {'x_auth_username' => username, 'x_auth_password' => password, 'x_auth_mode' => 'client_auth'}
     end
 
     def perform_pin_authorize_workflow

@@ -67,7 +67,6 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
           o.section "Authorization options:" do
             username
-            password
             consumer_key
             consumer_secret
             access_token
@@ -224,12 +223,6 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def username
         on('-u', '--username [username]', 'Username of account to authorize (required)') do |username|
           options.username = username
-        end
-      end
-
-      def password
-        on('-p', '--password [password]', 'Password of account to authorize (required)') do |password|
-          options.password = password ? password : CLI.prompt_for('Password')
         end
       end
 
