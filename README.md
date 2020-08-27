@@ -98,7 +98,7 @@ This will print a pair of consumer_key and its associated bearer token. Note, to
 You can access different hosts for other Twitter APIs using the -H flag.
 
 ```sh
-twurl -H "ads-api.twitter.com" "/5/accounts"
+twurl -H "ads-api.twitter.com" "/7/accounts"
 ```
 
 ## Uploading Media
@@ -165,7 +165,7 @@ twurl accounts
 
 ### Profiles and Bearer Tokens
 
-While changing the default profile allows you to select which access token (OAuth1.0a) to use, bearer tokens don't link to any user profiles as the Application-only authentication doesn't require user context. That is, you can make an application-only request regardless of your default profile if you specify the `-c` (--consumer-key) option once you generate a bearer token with this consumer key. By default, twurl reads the current profile's consumer key and its associated bearer token from `~/.twurlrc` file.
+While changing the default profile allows you to select which access token (OAuth1.0a) to use, bearer tokens don't link to any user profiles as the Application-only authentication doesn't require user context. That is, you can make an application-only request regardless of your default profile if you specify the `-c` (`--consumer-key`) option once you generate a bearer token with this consumer key. By default, twurl reads the current profile's consumer key and its associated bearer token from `~/.twurlrc` file.
 
 ## Contributors
 
