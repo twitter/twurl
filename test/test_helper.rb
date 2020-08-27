@@ -17,7 +17,6 @@ module Twurl
       def test_exemplar
         options                 = new
         options.username        = 'exemplar_user_name'
-        options.password        = 'secret'
         options.consumer_key    = '123456789'
         options.consumer_secret = '987654321'
         options.subcommands     = []

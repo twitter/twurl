@@ -166,10 +166,6 @@ class Twurl::OAuthClient::NewClientLoadingFromOptionsTest < Twurl::OAuthClient::
     @new_client = Twurl::OAuthClient.load_new_client_from_options(options)
   end
 
-  def test_password_is_included
-    assert_equal options.password, new_client.password
-  end
-
   def test_oauth_options_are_passed_through
     assert_equal client.to_hash, new_client.to_hash
   end
@@ -248,15 +244,15 @@ class Twurl::OAuthClient::CredentialsForAccessTokenExchangeTest < Twurl::OAuthCl
     parsed_response = {:oauth_token        => "123456789",
                        :oauth_token_secret => "abcdefghi",
                        :user_id            => "3191321",
-                       :screen_name        => "noradio",
-                       :x_auth_expires     => "0"}
+                       :screen_name        => "noradio"
+                      }
 
     mock(client.consumer).
       token_request(:post,
                     client.consumer.access_token_path,
                     nil,
                     {},
-                    client.client_auth_parameters) { parsed_response }
+                   ) { parsed_response }
 
    assert client.needs_to_authorize?
    client.exchange_credentials_for_access_token

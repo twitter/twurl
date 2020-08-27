@@ -67,7 +67,6 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
           o.section "Authorization options:" do
             username
-            password
             consumer_key
             consumer_secret
             access_token
@@ -96,7 +95,15 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           end
         end
 
-        arguments                 = option_parser.parse!(args)
+        begin
+          arguments               = option_parser.parse!(args)
+        rescue OptionParser::InvalidOption
+          CLI.puts "ERROR: undefined option"
+          exit
+        rescue
+          CLI.puts "ERROR: invalid argument"
+          exit
+        end
         Twurl.options.command     = extract_command!(arguments)
         Twurl.options.path        = extract_path!(arguments)
         Twurl.options.subcommands = arguments
@@ -216,12 +223,6 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
       def username
         on('-u', '--username [username]', 'Username of account to authorize (required)') do |username|
           options.username = username
-        end
-      end
-
-      def password
-        on('-p', '--password [password]', 'Password of account to authorize (required)') do |password|
-          options.password = password ? password : CLI.prompt_for('Password')
         end
       end
 

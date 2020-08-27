@@ -72,7 +72,7 @@ module Twurl
     end
 
     def aliases
-      data['aliases']
+      data['aliases'] ||= {}
     end
 
     def bearer_token(consumer_key, bearer_token)
