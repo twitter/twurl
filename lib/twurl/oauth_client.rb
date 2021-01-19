@@ -268,10 +268,8 @@ module Twurl
       consumer.http.open_timeout = Twurl.options.connection_timeout if Twurl.options.connection_timeout
       # Only override if Net::HTTP support max_retries (since Ruby >= 2.5)
       consumer.http.max_retries = 0 if consumer.http.respond_to?(:max_retries=)
-      if Twurl.options.ssl?
-        consumer.http.use_ssl     = true
-        consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
+      consumer.http.use_ssl     = true
+      consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
 
     def consumer

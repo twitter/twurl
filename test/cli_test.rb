@@ -184,21 +184,6 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
   end
   include HeaderParsingTests
 
-  module SSLDisablingTests
-    def test_ssl_is_on_by_default
-      options = Twurl::CLI.parse_options([TEST_PATH])
-      assert options.ssl?
-    end
-
-    def test_passing_no_ssl_option_disables_ssl
-      ['-U', '--no-ssl'].each do |switch|
-        options = Twurl::CLI.parse_options([TEST_PATH, switch])
-        assert !options.ssl?
-      end
-    end
-  end
-  include SSLDisablingTests
-
   module HostOptionTests
     def test_not_specifying_host_sets_it_to_the_default
       options = Twurl::CLI.parse_options([TEST_PATH])

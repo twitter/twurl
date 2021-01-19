@@ -80,7 +80,6 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
             headers
             host
             quiet
-            disable_ssl
             request_method
             help
             version
@@ -277,12 +276,6 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         end
       end
 
-      def disable_ssl
-        on('-U', '--no-ssl', 'Disable SSL (default: SSL is enabled)') do |use_ssl|
-          options.protocol = 'http'
-        end
-      end
-
       def request_method
         on('-X', '--request-method [method]', 'Request method (default: GET)') do |request_method|
           options.request_method = request_method.downcase
@@ -372,10 +365,6 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
     def base_url
       "#{protocol}://#{host}"
-    end
-
-    def ssl?
-      protocol == 'https'
     end
 
     def debug_output_io
