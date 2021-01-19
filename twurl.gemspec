@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.name = 'twurl'
   spec.rdoc_options = ['--title', 'twurl -- OAuth-enabled curl for the Twitter API', '--main', 'README.md', '--line-numbers', '--inline-source']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.4.0'
+  spec.required_ruby_version = '>= 2.5.0'
   spec.summary = spec.description
   spec.version = Twurl::Version
 end
