@@ -12,12 +12,18 @@ module Twurl
           end
         else
           CLI.puts NO_ALIASES_MESSAGE
+          exit
         end
       when 1
         if options.path
+          if Twurl::CLI::SUPPORTED_COMMANDS.include?(options.subcommands.first)
+            CLI.puts "ERROR: '#{options.subcommands.first}' is reserved for commands. Please use different alias name."
+            exit
+          end
           OAuthClient.rcfile.alias(options.subcommands.first, options.path)
         else
           CLI.puts NO_PATH_PROVIDED_MESSAGE
+          exit
         end
       end
     end
