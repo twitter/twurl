@@ -298,7 +298,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
       def version
         on_tail("-v", "--version", "Show version") do
-          CLI.puts Version
+          CLI.puts "twurl version: #{Version}\nplatform: #{RUBY_ENGINE} #{RUBY_VERSION} (#{RUBY_PLATFORM})"
           exit
         end
       end
