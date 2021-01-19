@@ -169,9 +169,15 @@ module Twurl
         if options.data.length == 1 && options.data.values.first == nil
           request.body = options.data.keys.first
         else
-          request.body = options.data.map do |key, value|
-            "#{key}=#{CGI.escape value}"
-          end.join("&")
+          begin
+            request.body = options.data.map do |key, value|
+              "#{key}=#{CGI.escape(CGI.unescape(value))}"
+            end.join("&")
+          rescue
+            CLI.puts "ERROR: failed to parse POST request body\n" +
+                     "(Tip: if '&' character presents in any of your parameter values except as a delimiter symbol please escape and replace it with '%26')"
+            exit
+          end
         end
       end
       request
@@ -212,7 +218,7 @@ module Twurl
       params = request['Authorization'].sub(/^OAuth\s+/, '').split(/,\s+/).map { |p|
         k, v = p.split('=')
         v =~ /"(.*?)"/
-        "#{k}=#{CGI::escape($1)}"
+        "#{k}=#{CGI.escape($1)}"
       }.join('&')
       "#{Twurl.options.base_url}#{request.path}?#{params}"
     end

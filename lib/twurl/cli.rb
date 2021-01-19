@@ -172,7 +172,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
         def escape_params(params)
           CGI::parse(params).map do |key, value|
-            "#{CGI.escape key}=#{CGI.escape value.first}"
+            "#{CGI.escape(key)}=#{CGI.escape(value.first)}"
           end.join("&")
         end
     end
