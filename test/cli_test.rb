@@ -26,9 +26,10 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
   module PathParsingTests
     def test_missing_path_throws_no_path_found
       stub(Twurl::CLI).puts
-      assert_raises Twurl::CLI::NoPathFound do
+      e = assert_raises Twurl::Exception do
         Twurl::CLI.parse_options([])
       end
+      assert_equal 'No path found', e.message
     end
 
     def test_uri_params_are_encoded
@@ -124,17 +125,12 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
   include DataParsingTests
 
   module RawDataParsingTests
-    def test_extracting_a_single_key_value_pair
-      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value'])
-      assert_equal({'key' => 'value'}, options.data)
+    def test_raw_data_option_should_not_use_parser
+      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=foo%26bar'])
+      assert_equal('key=foo%26bar', options.data)
 
-      options = Twurl::CLI.parse_options([TEST_PATH, '--raw-data', 'key=value'])
-      assert_equal({'key' => 'value'}, options.data)
-    end
-
-    def test_with_special_to_url_characters_in_value
-      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=a+%26%26+b+%2B%2B+c'])
-      assert_equal({'key' => 'a && b ++ c'}, options.data)
+      options = Twurl::CLI.parse_options([TEST_PATH, '--raw-data', 'key=foo%26bar'])
+      assert_equal('key=foo%26bar', options.data)
     end
 
     def test_passing_data_and_no_explicit_request_method_defaults_request_method_to_post
@@ -144,26 +140,19 @@ class Twurl::CLI::OptionParsingTest < Minitest::Test
 
     def test_passing_data_and_an_explicit_request_method_uses_the_specified_method
       options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value', '-X', 'DELETE'])
-      assert_equal({'key' => 'value'}, options.data)
       assert_equal 'delete', options.request_method
     end
 
-    def test_multiple_pairs_when_option_is_specified_multiple_times_on_command_line_collects_all
-      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value', '-d', 'another=pair'])
-      assert_equal({'key' => 'value', 'another' => 'pair'}, options.data)
+    def test_error_when_option_is_specified_multiple_times
+      assert_raises Twurl::Exception do
+        Twurl::CLI.parse_options([TEST_PATH, '-r', 'key1=value1', '-r', 'key2=value2'])
+      end
     end
 
-    def test_multiple_pairs_separated_by_ampersand_are_all_captured
-      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key=value+%26+value&another=pair'])
-      assert_equal({'key' => 'value & value', 'another' => 'pair'}, options.data)
-    end
-
-    def test_extracting_an_empty_key_value_pair
-      options = Twurl::CLI.parse_options([TEST_PATH, '-r', 'key='])
-      assert_equal({'key' => ''}, options.data)
-
-      options = Twurl::CLI.parse_options([TEST_PATH, '--raw-data', 'key='])
-      assert_equal({'key' => ''}, options.data)
+    def test_error_when_option_is_specified_with_data_option
+      assert_raises Twurl::Exception do
+        Twurl::CLI.parse_options([TEST_PATH, '-r', 'key1=value1', '-d', 'key2=value2'])
+      end
     end
   end
   include RawDataParsingTests

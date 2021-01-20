@@ -162,21 +162,19 @@ module Twurl
 
         request.body = multipart_body.join
         request.content_type = "multipart/form-data, boundary=\"#{boundary}\""
-      elsif request.content_type && options.data
-        request.body = options.data.keys.first
+      elsif options.json_data
+        request.body = options.data
       elsif options.data
-        request.content_type = "application/x-www-form-urlencoded"
-        if options.data.length == 1 && options.data.values.first == nil
-          request.body = options.data.keys.first
+        request.content_type = "application/x-www-form-urlencoded" unless request.content_type
+        if options.raw_data
+          request.body = options.data
         else
           begin
             request.body = options.data.map do |key, value|
-              "#{key}=#{CGI.escape(CGI.unescape(value))}"
+              "#{key}" + (value.nil? ? "" : "=#{CGI.escape(value)}")
             end.join("&")
           rescue
-            CLI.puts "ERROR: failed to parse POST request body\n" +
-                     "(Tip: if '&' character presents in any of your parameter values except as a delimiter symbol please escape and replace it with '%26')"
-            exit
+            raise Exception, "ERROR: failed to parse POST request body"
           end
         end
       end

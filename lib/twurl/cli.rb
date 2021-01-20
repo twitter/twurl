@@ -6,8 +6,6 @@ module Twurl
     PROTOCOL_PATTERN       = /^\w+:\/\//
     README                 = File.dirname(__FILE__) + '/../../README.md'
     @output              ||= STDOUT
-    class NoPathFound < Exception
-    end
 
     class << self
       attr_accessor :output
@@ -15,8 +13,8 @@ module Twurl
       def run(args)
         begin
           options = parse_options(args)
-        rescue NoPathFound => e
-          exit
+        rescue Twurl::Exception => exception
+          abort(exception.message)
         end
         dispatch(options)
       end
@@ -97,11 +95,11 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         begin
           arguments               = option_parser.parse!(args)
         rescue OptionParser::InvalidOption
-          CLI.puts "ERROR: undefined option"
-          exit
+          raise Exception "ERROR: undefined option"
+        rescue Twurl::Exception
+          raise
         rescue
-          CLI.puts "ERROR: invalid argument"
-          exit
+          raise Exception "ERROR: invalid argument"
         end
         Twurl.options.command     = extract_command!(arguments)
         Twurl.options.path        = extract_path!(arguments)
@@ -109,7 +107,7 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
         
         if Twurl.options.command == DEFAULT_COMMAND and Twurl.options.path.nil? and Twurl.options.args.empty?
           CLI.puts option_parser
-          raise NoPathFound, "No path found"
+          raise Exception, "No path found"
         end
 
         Twurl.options
@@ -233,12 +231,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
       def data
         on('-d', '--data [data]', 'Sends the specified data in a POST request to the HTTP server.') do |data|
-          if options.args.count { |item| /content-type: (.*)/i.match(item) } > 0
-            options.data[data] = nil
+          if options.args.count { |item| /^content-type:\s+application\/json/i.match(item) } > 0
+            options.json_data = true
+            options.data = data
           else
-            data.split('&').each do |pair|
-              key, value = pair.split('=', 2)
-              options.data[key] = value
+            CGI.parse(data).each_pair do |key, value|
+              options.data[key] = value.first
             end
           end
         end
@@ -246,9 +244,13 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
 
       def raw_data
         on('-r', '--raw-data [data]', 'Sends the specified data as it is in a POST request to the HTTP server.') do |data|
-          CGI::parse(data).each_pair do |key, value|
-            options.data[key] = value.first
+          if options.raw_data
+            raise Exception, "ERROR: can't specify '-r' option more than once"
+          elsif options.args.include?('-d') || options.args.include?('--data')
+            raise Exception, "ERROR: can't use '-r' and '-d' options together"
           end
+          options.raw_data = true
+          options.data = data
         end
       end
 

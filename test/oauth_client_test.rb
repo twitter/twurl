@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/test_helper'
 
 class Twurl::OAuthClient::AbstractOAuthClientTest < Minitest::Test
+  TEST_PATH = '/1.1/url/does/not/matter.json'
+
   attr_reader :client, :options
   def setup
     Twurl::OAuthClient.instance_variable_set(:@rcfile, nil)
@@ -199,10 +201,7 @@ class Twurl::OAuthClient::PerformingRequestsFromOptionsTest < Twurl::OAuthClient
 
   def test_content_type_is_not_overridden_if_set_and_data_in_options
     client = Twurl::OAuthClient.test_exemplar
-
-    options.request_method = 'post'
-    options.data           = { '{ "foo": "bar" }' => nil }
-    options.headers        = { 'Content-Type' => 'application/json' }
+    options = Twurl::CLI.parse_options([TEST_PATH, '-d', '{ "foo": "bar" }', '-A', 'Content-Type: application/json'])
 
     mock(client.consumer.http).request(
       satisfy { |req| req.is_a?(Net::HTTP::Post) && req.content_type == 'application/json' }
@@ -213,12 +212,25 @@ class Twurl::OAuthClient::PerformingRequestsFromOptionsTest < Twurl::OAuthClient
 
   def test_content_type_is_set_to_form_encoded_if_not_set_and_data_in_options
     client = Twurl::OAuthClient.test_exemplar
-
-    options.request_method = 'post'
-    options.data           = { '{ "foo": "bar" }' => nil }
+    options = Twurl::CLI.parse_options([TEST_PATH, '-d', 'foo=bar'])
 
     mock(client.consumer.http).request(
       satisfy { |req| req.is_a?(Net::HTTP::Post) && req.content_type == 'application/x-www-form-urlencoded' }
+    )
+
+    client.perform_request_from_options(options)
+  end
+
+  def test_post_body_is_parsed_and_escaped_properly_through_request_builder
+    client = Twurl::OAuthClient.test_exemplar
+    options = Twurl::CLI.parse_options([TEST_PATH, '-d', 'foo=text%26text'])
+
+    mock(client.consumer.http).request(
+      satisfy { |req|
+        req.is_a?(Net::HTTP::Post) &&
+        req.content_type == 'application/x-www-form-urlencoded' &&
+        req.body == 'foo=text%26text'
+      }
     )
 
     client.perform_request_from_options(options)
