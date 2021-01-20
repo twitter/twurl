@@ -22,11 +22,11 @@ module Twurl
         }
       }
     rescue URI::InvalidURIError
-      CLI.puts INVALID_URI_MESSAGE
+      raise Exception, INVALID_URI_MESSAGE
     rescue Net::ReadTimeout
-      CLI.puts READ_TIMEOUT_MESSAGE
+      raise Exception, READ_TIMEOUT_MESSAGE
     rescue Net::OpenTimeout
-      CLI.puts OPEN_TIMEOUT_MESSAGE
+      raise Exception, OPEN_TIMEOUT_MESSAGE
     end
   end
 
