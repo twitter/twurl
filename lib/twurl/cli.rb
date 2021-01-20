@@ -5,6 +5,9 @@ module Twurl
     PATH_PATTERN           = /^\/\w+/
     PROTOCOL_PATTERN       = /^\w+:\/\//
     README                 = File.dirname(__FILE__) + '/../../README.md'
+    DEFAULT_REQUEST_METHOD = 'get'
+    DEFAULT_HOST           = 'api.twitter.com'
+    DEFAULT_PROTOCOL       = 'https'
     @output              ||= STDOUT
 
     class << self
@@ -48,6 +51,9 @@ module Twurl
         Twurl.options.headers = {}
         Twurl.options.upload  = {}
         Twurl.options.upload['file'] = []
+        Twurl.options.host     = DEFAULT_HOST
+        Twurl.options.protocol = DEFAULT_PROTOCOL
+        Twurl.options.debug_output_io = STDERR
 
         option_parser = OptionParser.new do |o|
           o.extend AvailableOptions
@@ -109,6 +115,12 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
           CLI.puts option_parser
           raise Exception, "No path found"
         end
+
+        if Twurl.options.request_method.nil?
+          Twurl.options.request_method = Twurl.options.data.empty? ? DEFAULT_REQUEST_METHOD : 'post'
+        end
+
+        Twurl.options.base_url = "#{Twurl.options.protocol}://#{Twurl.options.host}"
 
         Twurl.options
       end
@@ -354,39 +366,11 @@ Supported Commands: #{SUPPORTED_COMMANDS.sort.join(', ')}
   end
 
   class Options < OpenStruct
-    DEFAULT_REQUEST_METHOD = 'get'
-    DEFAULT_HOST           = 'api.twitter.com'
-    DEFAULT_PROTOCOL       = 'https'
-
     def oauth_client_options
       OAuthClient::OAUTH_CLIENT_OPTIONS.inject({}) do |options, option|
         options[option] = send(option)
         options
       end
-    end
-
-    def base_url
-      "#{protocol}://#{host}"
-    end
-
-    def debug_output_io
-      super || STDERR
-    end
-
-    def request_method
-      super || (data.empty? ? DEFAULT_REQUEST_METHOD : 'post')
-    end
-
-    def protocol
-      super || DEFAULT_PROTOCOL
-    end
-
-    def host
-      super || DEFAULT_HOST
-    end
-
-    def proxy
-      super || nil
     end
   end
 end
