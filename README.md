@@ -1,8 +1,8 @@
 # Twurl
 
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/twitter/twurl/blob/master/LICENSE)
- [![Gem Version](https://badge.fury.io/rb/twurl.svg)](https://badge.fury.io/rb/twurl)
-  [![Build Status](https://travis-ci.com/twitter/twurl.svg?branch=master)](https://travis-ci.com/twitter/twurl)
+[![Gem Version](https://badge.fury.io/rb/twurl.svg)](https://badge.fury.io/rb/twurl)
+[![CI](https://github.com/twitter/twurl/actions/workflows/ci.yml/badge.svg)](https://github.com/twitter/twurl/actions/workflows/ci.yml)
 
 Twurl is like curl, but tailored specifically for the Twitter API.
 It knows how to grant an access token to a client application for
