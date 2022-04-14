@@ -5,6 +5,7 @@ require 'twurl/version'
 
 Gem::Specification.new do |spec|
   spec.add_dependency 'oauth', '~> 0.4'
+  spec.add_dependency 'ostruct', '>= 0.3.3'
   spec.authors = ["Marcel Molina", "Erik Michaels-Ober", "@TwitterDev team"]
   spec.description = %q{Curl for the Twitter API}
   spec.bindir = 'bin'
