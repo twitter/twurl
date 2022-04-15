@@ -4,7 +4,12 @@
     "service": "twurl",
     "workspaceFolder": "/usr/src/app",
     "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash",
+        "terminal.integrated.profiles.linux": {
+            "bash": {
+                "path": "bash",
+                "args": ["-l"]
+            }
+        }
     },
     "extensions": [
 		"rebornix.Ruby"
