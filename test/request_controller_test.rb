@@ -42,8 +42,8 @@ class Twurl::RequestController::RequestTest < Twurl::RequestController::Abstract
   def test_request_response_is_written_to_output
     expected_body = 'this is a fake response body'
     response      = Object.new
-    mock(response).read_body { |block| block.call expected_body }
-    mock(client).perform_request_from_options(options).times(1) { |options, block| block.call(response) }
+    mock(response).read_body { |&block| block.call expected_body }
+    mock(client).perform_request_from_options(options).times(1) { |_options, &block| block.call(response) }
 
     controller.perform_request
 
@@ -60,8 +60,8 @@ class Twurl::RequestController::RequestTest < Twurl::RequestController::Abstract
     custom_options = options
     custom_options.json_format = true
     response      = Object.new
-    mock(response).read_body { |block| block.call response_body }
-    mock(client).perform_request_from_options(custom_options).times(1) { |custom_options, block| block.call(response) }
+    mock(response).read_body { |&block| block.call response_body }
+    mock(client).perform_request_from_options(custom_options).times(1) { |_custom_options, &block| block.call(response) }
 
     controller.perform_request
 
