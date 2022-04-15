@@ -6,7 +6,7 @@ class Twurl::Options::Test < Minitest::Test
     @options = Twurl::Options.new
   end
 
-  def test_base_url_is_built_from_host_option
+  def test_base_url_is_built_from_protocol_and_host
     options = Twurl::CLI.parse_options(['-H', 'ads-api.twitter.com'])
 
     assert_equal 'https://ads-api.twitter.com', options.base_url
