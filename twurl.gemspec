@@ -1,4 +1,3 @@
-# coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'twurl/version'
@@ -11,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.executables << 'twurl'
   spec.extra_rdoc_files = Dir["*.md", "LICENSE"]
   spec.files = Dir["*.md", "LICENSE", "twurl.gemspec", "bin/*", "lib/**/*"]
-  spec.homepage = 'http://github.com/twitter/twurl' 
+  spec.homepage = 'https://github.com/twitter/twurl'
   spec.licenses = ['MIT']
   spec.name = 'twurl'
   spec.rdoc_options = ['--title', 'twurl -- OAuth-enabled curl for the Twitter API', '--main', 'README.md', '--line-numbers', '--inline-source']
