@@ -162,16 +162,20 @@ module Twurl
 
         request.body = multipart_body.join
         request.content_type = "multipart/form-data, boundary=\"#{boundary}\""
-      elsif request.content_type && options.data
-        request.body = options.data.keys.first
+      elsif options.json_data
+        request.body = options.data
       elsif options.data
-        request.content_type = "application/x-www-form-urlencoded"
-        if options.data.length == 1 && options.data.values.first == nil
-          request.body = options.data.keys.first
+        request.content_type = "application/x-www-form-urlencoded" unless request.content_type
+        if options.raw_data
+          request.body = options.data
         else
-          request.body = options.data.map do |key, value|
-            "#{key}=#{CGI.escape value}"
-          end.join("&")
+          begin
+            request.body = options.data.map do |key, value|
+              "#{key}" + (value.nil? ? "" : "=#{CGI.escape(value)}")
+            end.join("&")
+          rescue
+            raise Exception, "ERROR: failed to parse POST request body"
+          end
         end
       end
       request
@@ -202,7 +206,11 @@ module Twurl
     def perform_pin_authorize_workflow
       @request_token = consumer.get_request_token
       CLI.puts("Go to #{generate_authorize_url} and paste in the supplied PIN")
-      pin = STDIN.gets
+      begin
+        pin = STDIN.gets.chomp
+      rescue SystemExit, Interrupt
+        raise Exception, "Operation cancelled"
+      end
       access_token = @request_token.get_access_token(:oauth_verifier => pin.chomp)
       {:oauth_token => access_token.token, :oauth_token_secret => access_token.secret}
     end
@@ -212,7 +220,7 @@ module Twurl
       params = request['Authorization'].sub(/^OAuth\s+/, '').split(/,\s+/).map { |p|
         k, v = p.split('=')
         v =~ /"(.*?)"/
-        "#{k}=#{CGI::escape($1)}"
+        "#{k}=#{CGI.escape($1)}"
       }.join('&')
       "#{Twurl.options.base_url}#{request.path}?#{params}"
     end
@@ -260,12 +268,9 @@ module Twurl
       consumer.http.set_debug_output(Twurl.options.debug_output_io) if Twurl.options.trace
       consumer.http.read_timeout = consumer.http.open_timeout = Twurl.options.timeout || 60
       consumer.http.open_timeout = Twurl.options.connection_timeout if Twurl.options.connection_timeout
-      # Only override if Net::HTTP support max_retries (since Ruby >= 2.5)
-      consumer.http.max_retries = 0 if consumer.http.respond_to?(:max_retries=)
-      if Twurl.options.ssl?
-        consumer.http.use_ssl     = true
-        consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
+      consumer.http.max_retries = 0
+      consumer.http.use_ssl     = true
+      consumer.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
 
     def consumer

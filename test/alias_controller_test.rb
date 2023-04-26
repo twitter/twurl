@@ -41,13 +41,15 @@ class Twurl::AliasesController::DispatchTest < Minitest::Test
     controller.dispatch
   end
 
-  def test_when_no_path_is_provided_nothing_happens
+  def test_error_if_no_path_is_provided
     options.subcommands = ['a']
     assert_nil options.path
 
-    mock(Twurl::CLI).puts(Twurl::AliasesController::NO_PATH_PROVIDED_MESSAGE).times(1)
+    e = assert_raises Twurl::Exception do
+      controller = Twurl::AliasesController.new(client, options)
+      controller.dispatch
+    end
 
-    controller = Twurl::AliasesController.new(client, options)
-    controller.dispatch
+    assert_equal Twurl::AliasesController::NO_PATH_PROVIDED_MESSAGE, e.message
   end
 end
