@@ -2,7 +2,7 @@ module Twurl
   class Version
     MAJOR = 0 unless defined? Twurl::Version::MAJOR
     MINOR = 9 unless defined? Twurl::Version::MINOR
-    PATCH = 6 unless defined? Twurl::Version::PATCH
+    PATCH = 7 unless defined? Twurl::Version::PATCH
     PRE = nil unless defined? Twurl::Version::PRE # Time.now.to_i.to_s
 
     class << self

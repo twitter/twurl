@@ -10,7 +10,7 @@ $ gem install twurl
 ```sh
 # verify installation
 $ twurl -v
-0.9.6
+0.9.7
 ```
 
 ## Install from source
@@ -32,5 +32,5 @@ If you don't want to install Twurl globally on your system, use `--path` [option
 ```
 $ bundle install --path path/to/directory
 $ bundle exec twurl -v
-0.9.6
+0.9.7
 ```
